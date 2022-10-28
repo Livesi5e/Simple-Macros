@@ -10,22 +10,45 @@ from tkinter import messagebox
 
 list = ("Mouse Movement", "Mouse Click", "Keyboard Input")
 mb = ("Left", "Middle", "Right")
+amm = ("Single", "Multiple")
 keys = ()
 cr = []
 view = "Add values on the left to see them here"
 font = ("Arial", 12)
 visible = False
+multiple = False
+single = True
 
 # All window components
 
 root = tkinter.Tk()
 root.withdraw()
 
+one = [
+    [
+        sg.T("Choose a keypress here: "),
+        sg.Combo(values=keys, size=(10, len(keys)), default_value="-none-", key="-aksi-", enable_events=True, readonly=True)
+    ]
+]
+
+more = [
+    [
+        sg.T("Type here: "),
+        sg.InputText(key="-akmi-", size=(10, 20))
+    ]
+]
+
 add_key = [
     [sg.T('')],
     [
-        sg.T("Key: "),
-        sg.Combo(values=keys, size=(10, len(keys)), default_value="-none-", key="-kik", enable_events=True, readonly=True)
+        sg.T("Ammount of Charakters: "),
+        sg.Combo(values=amm, size=(10, len(amm)), default_value="Single", key="-amm-", enable_events=True, readonly=True),
+    ],
+    [
+        sg.pin(sg.Column(one, visible=single, key='-aks-'))
+    ],
+    [
+        sg.pin(sg.Column(more, visible=multiple, key='-akm-'))
     ],
     [
         sg.Submit(button_text="Add", key="-ak-"),
@@ -142,15 +165,6 @@ def toggle(change):
     return change
 
 # ------ Event Loop ------
-# ID-List:
-# 
-# 0 - Mouse Movement
-# 1 - Mouse Click
-# 2 - Keyboard Input
-#
-# 3 - Left MB
-# 4 - Right MB
-# 5 - Middle MB
 
 while True:
     event, values = window.read()
@@ -174,6 +188,17 @@ while True:
     elif event == "-aca-":
         visible = toggle(visible)
         window["-adv-"].update(visible=visible)
+    elif event == "-amm-":
+        if values["-amm-"] == 'Single':
+            single = True
+            multiple = False
+            window["-akm-"].update(visible=multiple)
+            window["-aks-"].update(visible=single)
+        else:
+            single = False
+            multiple = True
+            window["-aks-"].update(visible=single)
+            window["-akm-"].update(visible=multiple)
     elif event == "-am-":
         if values['-mmx-'] != '' and values['-mmy-'] != '':
             cr.append([0, int(values['-mmx-']), int(values['-mmy-'])])
