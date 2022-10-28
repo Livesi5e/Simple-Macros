@@ -2,7 +2,9 @@
 #
 # Does not support recording
 
+from turtle import color
 import PySimpleGUI as sg
+import pyautogui as pag
 import tkinter
 from tkinter import messagebox
 
@@ -11,13 +13,16 @@ from tkinter import messagebox
 list = ("Mouse Movement", "Mouse Click", "Keyboard Input")
 mb = ("Left", "Middle", "Right")
 amm = ("Single", "Multiple")
-keys = ()
 cr = []
-view = "Add values on the left to see them here"
+macros = []
+sel=''
+view = "Nothing here yet"
 font = ("Arial", 12)
 visible = False
 multiple = False
 single = True
+
+print(pag.KEYBOARD_KEYS)
 
 # All window components
 
@@ -26,8 +31,8 @@ root.withdraw()
 
 one = [
     [
-        sg.T("Choose a keypress here: "),
-        sg.Combo(values=keys, size=(10, len(keys)), default_value="-none-", key="-aksi-", enable_events=True, readonly=True)
+        sg.T("Choose a keypress: "),
+        sg.Button(button_text=sel, key='-cho-')
     ]
 ]
 
@@ -119,16 +124,33 @@ new_macro = [
 current_macro = [
     [sg.T("Current Macro: ", font=font)],
     [sg.T(view, key='-cur-')],
-    [sg.Submit(button_text="Create", key='-cre-', visible=False)]
+    [
+        sg.InputText(key="-crn-", size=(10, 20), visible=False),
+        sg.Submit(button_text="Create", key='-cre-', visible=False)
+    ]
+]
+
+your_macros = [
+    [
+        sg.Submit(button_text="New", key='-new-', visible=True)
+    ]
+]
+
+line = [
+    [
+        sg.VerticalSeparator()
+    ]
 ]
 
 # ------ Full layout ------
 
 layout = [
     [
-        sg.Column(new_macro),
+        sg.pin(sg.Column(new_macro, visible=False, key='-left-')),
         sg.VerticalSeparator(),
-        sg.Column(current_macro),
+        sg.pin(sg.Column(current_macro, visible=False, key='-mid-')),
+        sg.VerticalSeparator(),
+        sg.pin(sg.Column(your_macros, key="-ymc-"))
     ]
 ]
 
@@ -142,7 +164,7 @@ def UpdateMid():
         temp = old
         if x[0] == 0:
             old = temp + 'Mouse Movement to\n' + 'x: ' + str(x[1]) + ' ' + 'y: ' + str(x[2]) + '\n\n'
-        if x[0] == 1:
+        elif x[0] == 1:
             key = ''
             match x[1]:
                 case 3:
@@ -152,10 +174,22 @@ def UpdateMid():
                 case 5:
                     key = 'MMB'
             old = temp + 'Mouse Button Click at\n' + 'x: ' + str(x[2]) + ' ' + 'y: ' + str(x[3]) + '\nKey: ' + key + '\nAmmount of Clicks: ' + str(x[4]) + '\nTime between clicks: ' + str(x[5]) + '\n\n'
+        elif x[0] == 2:
+            old = temp + 'Keyboard Input:\n' + x[1] + '\n\n'
     return old
 
-def Clear():
-    print('test')
+def Reset():
+    window['-akmi-'].update('')
+    window['-amm-'].update('Single')
+    window['-mcb-'].update('-none-')
+    window['-mcx-'].update('')
+    window['-mcy-'].update('')
+    window['-mmx-'].update('')
+    window['-mmy-'].update('')
+
+def ResetAdv():
+    window['-mca-'].update('')
+    window['-mct-'].update('')
 
 def toggle(change):
     if change == True:
@@ -164,15 +198,268 @@ def toggle(change):
         change = True
     return change
 
+def char_select():
+    sim = True
+    chosen = 'Nothing selected'
+    chars = [
+        [
+            sg.Button(button_text='a', button_color='MediumOrchid1', size=(2, 1), key='-a-'), 
+            sg.Button(button_text='b', button_color='MediumOrchid1', size=(2, 1), key='-b-'),
+            sg.Button(button_text='c', button_color='MediumOrchid1', size=(2, 1), key='-c-'),
+            sg.Button(button_text='d', button_color='MediumOrchid1', size=(2, 1), key='-d-'),
+            sg.Button(button_text='e', button_color='MediumOrchid1', size=(2, 1), key='-e-'),
+            sg.Button(button_text='f', button_color='MediumOrchid1', size=(2, 1), key='-f-'),
+            sg.Button(button_text='g', button_color='MediumOrchid1', size=(2, 1), key='-g-'),
+            sg.Button(button_text='h', button_color='MediumOrchid1', size=(2, 1), key='-h-'),
+            sg.Button(button_text='i', button_color='MediumOrchid1', size=(2, 1), key='-i-'),
+        ],
+        [
+            sg.Button(button_text='j', button_color='MediumOrchid1', size=(2, 1), key='-j-'), 
+            sg.Button(button_text='k', button_color='MediumOrchid1', size=(2, 1), key='-k-'),
+            sg.Button(button_text='l', button_color='MediumOrchid1', size=(2, 1), key='-l-'),
+            sg.Button(button_text='m', button_color='MediumOrchid1', size=(2, 1), key='-m-'),
+            sg.Button(button_text='n', button_color='MediumOrchid1', size=(2, 1), key='-n-'),
+            sg.Button(button_text='o', button_color='MediumOrchid1', size=(2, 1), key='-o-'),
+            sg.Button(button_text='p', button_color='MediumOrchid1', size=(2, 1), key='-p-'),
+            sg.Button(button_text='q', button_color='MediumOrchid1', size=(2, 1), key='-q-'),
+            sg.Button(button_text='r', button_color='MediumOrchid1', size=(2, 1), key='-r-'),
+        ],
+        [
+            sg.Button(button_text='s', button_color='MediumOrchid1', size=(2, 1), key='-s-'), 
+            sg.Button(button_text='t', button_color='MediumOrchid1', size=(2, 1), key='-t-'),
+            sg.Button(button_text='u', button_color='MediumOrchid1', size=(2, 1), key='-u-'),
+            sg.Button(button_text='v', button_color='MediumOrchid1', size=(2, 1), key='-v-'),
+            sg.Button(button_text='w', button_color='MediumOrchid1', size=(2, 1), key='-w-'),
+            sg.Button(button_text='x', button_color='MediumOrchid1', size=(2, 1), key='-x-'),
+            sg.Button(button_text='y', button_color='MediumOrchid1', size=(2, 1), key='-y-'),
+            sg.Button(button_text='z', button_color='MediumOrchid1', size=(2, 1), key='-z-'),
+            sg.Button(button_text='0', button_color='MediumOrchid1', size=(2, 1), key='-0-'),
+        ],
+        [
+            sg.Button(button_text='1', button_color='MediumOrchid1', size=(2, 1), key='-1-'), 
+            sg.Button(button_text='2', button_color='MediumOrchid1', size=(2, 1), key='-2-'),
+            sg.Button(button_text='3', button_color='MediumOrchid1', size=(2, 1), key='-3-'),
+            sg.Button(button_text='4', button_color='MediumOrchid1', size=(2, 1), key='-4-'),
+            sg.Button(button_text='5', button_color='MediumOrchid1', size=(2, 1), key='-5-'),
+            sg.Button(button_text='6', button_color='MediumOrchid1', size=(2, 1), key='-6-'),
+            sg.Button(button_text="7", button_color='MediumOrchid1', size=(2, 1), key='-7-'),
+            sg.Button(button_text='8', button_color='MediumOrchid1', size=(2, 1), key='-8-'),
+            sg.Button(button_text='9', button_color='MediumOrchid1', size=(2, 1), key='-9-'),
+        ],
+        [
+            sg.Button(button_text='!', button_color='MediumOrchid1', size=(2, 1), key='-!-'), 
+            sg.Button(button_text='"', button_color='MediumOrchid1', size=(2, 1), key='-"-'),
+            sg.Button(button_text='#', button_color='MediumOrchid1', size=(2, 1), key='-#-'),
+            sg.Button(button_text='$', button_color='MediumOrchid1', size=(2, 1), key='-$-'),
+            sg.Button(button_text='%', button_color='MediumOrchid1', size=(2, 1), key='-%-'),
+            sg.Button(button_text='&', button_color='MediumOrchid1', size=(2, 1), key='-&-'),
+            sg.Button(button_text="'", button_color='MediumOrchid1', size=(2, 1), key="-'-"),
+            sg.Button(button_text='(', button_color='MediumOrchid1', size=(2, 1), key='-(-'),
+            sg.Button(button_text=')', button_color='MediumOrchid1', size=(2, 1), key='-)-'),
+        ],
+        [
+            sg.Button(button_text='*', button_color='MediumOrchid1', size=(2, 1), key='-*-'), 
+            sg.Button(button_text='+', button_color='MediumOrchid1', size=(2, 1), key='-+-'),
+            sg.Button(button_text=',', button_color='MediumOrchid1', size=(2, 1), key='-,-'),
+            sg.Button(button_text='-', button_color='MediumOrchid1', size=(2, 1), key='---'),
+            sg.Button(button_text='.', button_color='MediumOrchid1', size=(2, 1), key='-.-'),
+            sg.Button(button_text='/', button_color='MediumOrchid1', size=(2, 1), key='-/-'),
+            sg.Button(button_text=":", button_color='MediumOrchid1', size=(2, 1), key='-:-'),
+            sg.Button(button_text=';', button_color='MediumOrchid1', size=(2, 1), key='-;-'),
+            sg.Button(button_text='<', button_color='MediumOrchid1', size=(2, 1), key='-<-'),
+        ],
+        [
+            sg.Button(button_text='=', button_color='MediumOrchid1', size=(2, 1), key='-=-'), 
+            sg.Button(button_text='>', button_color='MediumOrchid1', size=(2, 1), key='->-'),
+            sg.Button(button_text='?', button_color='MediumOrchid1', size=(2, 1), key='-?-'),
+            sg.Button(button_text='@', button_color='MediumOrchid1', size=(2, 1), key='-@-'),
+            sg.Button(button_text='[', button_color='MediumOrchid1', size=(2, 1), key='-[-'),
+            sg.Button(button_text=']', button_color='MediumOrchid1', size=(2, 1), key='-]-'),
+            sg.Button(button_text="^", button_color='MediumOrchid1', size=(2, 1), key='-^-'),
+            sg.Button(button_text='_', button_color='MediumOrchid1', size=(2, 1), key='-_-'),
+            sg.Button(button_text='`', button_color='MediumOrchid1', size=(2, 1), key='-`-'),
+        ],
+        [
+            sg.Button(button_text='{', button_color='MediumOrchid1', size=(2, 1), key='-{-'), 
+            sg.Button(button_text='|', button_color='MediumOrchid1', size=(2, 1), key='-|-'),
+            sg.Button(button_text='}', button_color='MediumOrchid1', size=(2, 1), key='-}-'),
+            sg.Button(button_text='~', button_color='MediumOrchid1', size=(2, 1), key='-~-'),
+            sg.Button(button_text='\\t', button_color='MediumOrchid1', size=(2, 1), key='-tab-'),
+            sg.Button(button_text='\\n', button_color='MediumOrchid1', size=(2, 1), key='-new-'),
+            sg.Button(button_text="\\r", button_color='MediumOrchid1', size=(2, 1), key='-rew-'),
+            sg.Button(button_text='\\\\', button_color='MediumOrchid1', size=(2, 1), key='-bac-'),
+            sg.Button(button_text=' ', button_color='MediumOrchid1', size=(2, 1)),
+        ],
+    ]
+    sp_chars=[
+        [
+            sg.Button(button_text='F1', button_color='MediumOrchid1', size=(2, 1)), 
+            sg.Button(button_text='F2', button_color='MediumOrchid1', size=(2, 1)),
+            sg.Button(button_text='F3', button_color='MediumOrchid1', size=(2, 1)),
+            sg.Button(button_text='F4', button_color='MediumOrchid1', size=(2, 1)),
+            sg.Button(button_text='F5', button_color='MediumOrchid1', size=(2, 1)),
+            sg.Button(button_text='F6', button_color='MediumOrchid1', size=(2, 1)),
+            sg.Button(button_text="F7", button_color='MediumOrchid1', size=(2, 1)),
+            sg.Button(button_text='F8', button_color='MediumOrchid1', size=(2, 1)),
+            sg.Button(button_text='F9', button_color='MediumOrchid1', size=(2, 1)),
+        ],
+        [
+            sg.Button(button_text='F10', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F11', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F12', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F13', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F14', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F15', button_color='MediumOrchid1', size=(4, 1)),
+        ],
+        [
+            sg.Button(button_text='F16', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F17', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F18', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F19', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F20', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F21', button_color='MediumOrchid1', size=(4, 1)),
+        ],
+        [
+            sg.Button(button_text='F22', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F23', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F24', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='accept', button_color='MediumOrchid1', size=(5, 1)),
+            sg.Button(button_text='add', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='alt', button_color='MediumOrchid1', size=(4, 1)),
+        ],
+        [
+            sg.Button(button_text='altleft', button_color='MediumOrchid1', size=(5, 1)),
+            sg.Button(button_text='altright', button_color='MediumOrchid1', size=(5, 1)),
+            sg.Button(button_text='backspace', button_color='MediumOrchid1', size=(8, 1)),
+            sg.Button(button_text='browserback', button_color='MediumOrchid1', size=(9, 1)),
+        ],
+        [
+            sg.Button(button_text='browserfavorites', button_color='MediumOrchid1', size=(11, 1)),
+            sg.Button(button_text='browserforward', button_color='MediumOrchid1', size=(10, 1)),
+            sg.Button(button_text='browserhome', button_color='MediumOrchid1', size=(9, 1)),
+        ],
+        [
+            sg.Button(button_text='browserrefresh', button_color='MediumOrchid1', size=(10, 1)),
+            sg.Button(button_text='browsersearch', button_color='MediumOrchid1', size=(10, 1)),
+        ]
+    ]
+    layout = [
+        [sg.pin(sg.Column(chars, size=(320, 140), scrollable=True, vertical_scroll_only=True, visible=True, key='-sim-'))],
+        [sg.pin(sg.Column(sp_chars, size=(320, 140), scrollable=True, vertical_scroll_only=True, visible=False, key='-adv-'))],
+        [sg.T("Selected:"), sg.T(chosen, key='-sho-')],
+        [sg.Button(button_text='Select', key='Exit'), sg.Button(button_text='Special Inputs', key='-spe-')]
+    ]
+    window = sg.Window('Char Selector', layout)
+    while True:
+        event, values = window.read()
+        match event:
+            case 'Exit':
+                break
+            case sg.WIN_CLOSED:
+                break
+            case '-spe-':            
+                if sim == True:
+                    sim = False
+                    window['-sim-'].update(visible=False)
+                    window['-adv-'].update(visible=True)
+                else:
+                    sim = True
+                    window['-sim-'].update(visible=True)
+                    window['-adv-'].update(visible=False)
+            case '-a-':
+                chosen = 'a'
+                window['-sho-'].update(chosen)
+            case '-b-':
+                chosen = 'b'
+                window['-sho-'].update(chosen)
+            case '-c-':
+                chosen = 'c'
+                window['-sho-'].update(chosen)
+            case '-d-':
+                chosen = 'd'
+                window['-sho-'].update(chosen)
+            case '-e-':
+                chosen = 'e'
+                window['-sho-'].update(chosen)
+            case '-f-':
+                chosen = 'f'
+                window['-sho-'].update(chosen)
+            case '-g-':
+                chosen = 'g'
+                window['-sho-'].update(chosen)
+            case '-h-':
+                chosen = 'h'
+                window['-sho-'].update(chosen)
+            case '-i-':
+                chosen = 'i'
+                window['-sho-'].update(chosen)
+            case '-j-':
+                chosen = 'j'
+                window['-sho-'].update(chosen)
+            case '-k-':
+                chosen = 'k'
+                window['-sho-'].update(chosen)
+            case '-l-':
+                chosen = 'l'
+                window['-sho-'].update(chosen)
+            case '-m-':
+                chosen = 'm'
+                window['-sho-'].update(chosen)
+            case '-n-':
+                chosen = 'n'
+                window['-sho-'].update(chosen)
+            case '-o-':
+                chosen = 'o'
+                window['-sho-'].update(chosen)
+            case '-p-':
+                chosen = 'p'
+                window['-sho-'].update(chosen)
+            case '-q-':
+                chosen = 'q'
+                window['-sho-'].update(chosen)
+            case '-r-':
+                chosen = 'r'
+                window['-sho-'].update(chosen)
+            case '-s-':
+                chosen = 's'
+                window['-sho-'].update(chosen)
+            case '-t-':
+                chosen = 't'
+                window['-sho-'].update(chosen)
+            case '-u-':
+                chosen = 'u'
+                window['-sho-'].update(chosen)
+            case '-v-':
+                chosen = 'v'
+                window['-sho-'].update(chosen)
+            case '-w-':
+                chosen = 'w'
+                window['-sho-'].update(chosen)
+            case '-x-':
+                chosen = 'x'
+                window['-sho-'].update(chosen)
+            case '-y-':
+                chosen = 'y'
+                window['-sho-'].update(chosen)
+            case '-z-':
+                chosen = 'z'
+                window['-sho-'].update(chosen)
+    window.close()
+    return chosen
+
 # ------ Event Loop ------
 
 while True:
     event, values = window.read()
     if event in (sg.WIN_CLOSED, 'Exit', 'Cancel'):
         break
+    elif event == "-new-":
+        window['-left-'].update(visible=True)
+        window['-mid-'].update(visible=True)
     elif event == "-cat-":
         new_add = []
         combo = values["-cat-"]
+        Reset()
         if combo == 'Mouse Movement':
             window["-keyinp-"].update(visible=False)
             window["-mouseclick-"].update(visible=False)
@@ -187,6 +474,7 @@ while True:
             window["-keyinp-"].update(visible=True)
     elif event == "-aca-":
         visible = toggle(visible)
+        ResetAdv()
         window["-adv-"].update(visible=visible)
     elif event == "-amm-":
         if values["-amm-"] == 'Single':
@@ -199,16 +487,20 @@ while True:
             multiple = True
             window["-aks-"].update(visible=single)
             window["-akm-"].update(visible=multiple)
+        Reset()
     elif event == "-am-":
         if values['-mmx-'] != '' and values['-mmy-'] != '':
             cr.append([0, int(values['-mmx-']), int(values['-mmy-'])])
+            Reset()
             view = UpdateMid()
             window['-cur-'].update(view)
             window['-cre-'].update(visible=True)
+            window['-crn-'].update(visible=True)
         else:
             messagebox.showerror('Warning', 'Please add values and retry')
     elif event == "-ac-":
         if values['-mcx-'] != '' and values['-mcy-'] != '' and values['-mcb-'] != '':
+            Reset()
             button = 0
             match values['-mcb-']:
                 case 'Left':
@@ -232,8 +524,46 @@ while True:
             cr.append([1, button, int(values['-mcx-']), int(values['-mcy-']), amt, time])
             view = UpdateMid()
             window['-cre-'].update(visible=True)
+            window['-crn-'].update(visible=True)
             window['-cur-'].update(view)
         else:
             messagebox.showerror('Warning', 'Please add values and retry')
+    elif event == '-ak-':
+        Reset()
+        if values['-amm-'] == 'Single':
+            if sel != 'Nothing selected' and sel != '':
+                cr.append([2, sel])
+                view = UpdateMid()
+                window['-cur-'].update(view)
+                window['-cre-'].update(visible=True)
+                window['-crn-'].update(visible=True)
+            else:
+                messagebox.showerror('Warning', 'Please select a character and try again')
+        elif values['-amm-'] == 'Multiple':
+            if values['-akmi-'] != '':
+                cr.append([2, values['-akmi-']])
+                view = UpdateMid()
+                window['-cur-'].update(view)
+                window['-cre-'].update(visible=True)
+                window['-crn-'].update(visible=True)
+            else:
+                messagebox.showerror('Warning', 'Please enter a text and try again')
+    elif event == "-cre-":
+        if values['-crn-'] != '':
+            macros.append([values['-crn-'], cr])
+            print(len(macros))
+            new_row = [[sg.Button(button_text=values['-crn-'])]]
+            window.extend_layout(window['-ymc-'], new_row)
+            view = "Nothing here yet"
+            window['-cre-'].update(visible=False)
+            window['-crn-'].update(visible=False)
+            window['-cur-'].update(view)
+            window['-left-'].update(visible=False)
+            window['-mid-'].update(visible=False)
+        else:
+            messagebox.showinfo('Provide a name', 'Please provide a name to the Macro')
+    elif event == '-cho-':
+        sel = char_select()
+        window['-cho-'].update(sel)
 
 window.close()
