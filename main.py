@@ -9,11 +9,12 @@ from tkinter import messagebox
 # Inital variables
 
 list = ("Mouse Movement", "Mouse Click", "Keyboard Input")
-mb = ("Left", "Right")
+mb = ("Left", "Middle", "Right")
 keys = ()
 cr = []
 view = "Add values on the left to see them here"
 font = ("Arial", 12)
+visible = False
 
 # All window components
 
@@ -28,6 +29,17 @@ add_key = [
     ],
     [
         sg.Submit(button_text="Add", key="-ak-"),
+    ]
+]
+
+add_click_adv = [
+    [
+        sg.T("Ammount of clicks:"),
+        sg.InputText(key="-mca-", size=(10, 20))
+    ],
+    [
+        sg.T("Time between clicks:"),
+        sg.InputText(key="-mct-", size=(10, 20))
     ]
 ]
 
@@ -46,7 +58,11 @@ add_click = [
         sg.InputText(key="-mcy-", size=(10, 20)),
     ],
     [
+        sg.pin(sg.Column(add_click_adv, visible=False, key="-adv-")),
+    ],
+    [
         sg.Submit(button_text="Add", key="-ac-"),
+        sg.Submit(button_text="Advanced", key="-aca-")
     ]
 ]
 
@@ -80,7 +96,7 @@ new_macro = [
 current_macro = [
     [sg.T("Current Macro: ", font=font)],
     [sg.T(view, key='-cur-')],
-    [sg.Submit(button_text="Create", key='-cre-')]
+    [sg.Submit(button_text="Create", key='-cre-', visible=False)]
 ]
 
 # ------ Full layout ------
@@ -105,15 +121,25 @@ def UpdateMid():
             old = temp + 'Mouse Movement to\n' + 'x: ' + str(x[1]) + ' ' + 'y: ' + str(x[2]) + '\n\n'
         if x[0] == 1:
             key = ''
-            if x[1] == 3:
-                key = 'LMB'
-            if x[1] == 4:
-                key = 'RMB'
-            old = temp + 'Mouse Button Click at\n' + 'x: ' + str(x[2]) + ' ' + 'y: ' + str(x[3]) + '\nKey: ' + key + '\n' + '\n\n'
+            match x[1]:
+                case 3:
+                    key = 'LMB'
+                case 4:
+                    key = 'RMB'
+                case 5:
+                    key = 'MMB'
+            old = temp + 'Mouse Button Click at\n' + 'x: ' + str(x[2]) + ' ' + 'y: ' + str(x[3]) + '\nKey: ' + key + '\nAmmount of Clicks: ' + str(x[4]) + '\nTime between clicks: ' + str(x[5]) + '\n\n'
     return old
 
 def Clear():
     print('test')
+
+def toggle(change):
+    if change == True:
+        change = False
+    else:
+        change = True
+    return change
 
 # ------ Event Loop ------
 # ID-List:
@@ -124,6 +150,7 @@ def Clear():
 #
 # 3 - Left MB
 # 4 - Right MB
+# 5 - Middle MB
 
 while True:
     event, values = window.read()
@@ -144,11 +171,15 @@ while True:
             window["-mousemove-"].update(visible=False)
             window["-mouseclick-"].update(visible=False)
             window["-keyinp-"].update(visible=True)
+    elif event == "-aca-":
+        visible = toggle(visible)
+        window["-adv-"].update(visible=visible)
     elif event == "-am-":
         if values['-mmx-'] != '' and values['-mmy-'] != '':
             cr.append([0, int(values['-mmx-']), int(values['-mmy-'])])
             view = UpdateMid()
             window['-cur-'].update(view)
+            window['-cre-'].update(visible=True)
         else:
             messagebox.showerror('Warning', 'Please add values and retry')
     elif event == "-ac-":
@@ -159,10 +190,23 @@ while True:
                     button = 3
                 case 'Right':
                     button = 4
+                case 'Middle':
+                    button = 5
                 case _:
                     break
-            cr.append([1, button, int(values['-mcx-']), int(values['-mcy-'])])
+            amt = 0
+            time = 0
+            if values['-mca-'] == '':
+                amt = 1
+            else:
+                amt = int(values['-mca-'])
+            if values['-mct-'] == '':
+                time = 0.2
+            else:
+                time = int(values['-mct-'])
+            cr.append([1, button, int(values['-mcx-']), int(values['-mcy-']), amt, time])
             view = UpdateMid()
+            window['-cre-'].update(visible=True)
             window['-cur-'].update(view)
         else:
             messagebox.showerror('Warning', 'Please add values and retry')
