@@ -201,6 +201,7 @@ def toggle(change):
 def char_select():
     sim = True
     chosen = 'Nothing selected'
+    categories = ('Function Keys', 'Control Keys', 'Numpad')
     chars = [
         [
             sg.Button(button_text='a', button_color='MediumOrchid1', size=(2, 1), key='-a-'), 
@@ -288,10 +289,10 @@ def char_select():
             sg.Button(button_text='\\n', button_color='MediumOrchid1', size=(2, 1), key='-new-'),
             sg.Button(button_text="\\r", button_color='MediumOrchid1', size=(2, 1), key='-rew-'),
             sg.Button(button_text='\\\\', button_color='MediumOrchid1', size=(2, 1), key='-bac-'),
-            sg.Button(button_text=' ', button_color='MediumOrchid1', size=(2, 1)),
+            sg.Button(button_text=' ', button_color='MediumOrchid1', size=(2, 1), key='-spc-'),
         ],
     ]
-    sp_chars=[
+    func_keys=[
         [
             sg.Button(button_text='F1', button_color='MediumOrchid1', size=(2, 1)), 
             sg.Button(button_text='F2', button_color='MediumOrchid1', size=(2, 1)),
@@ -323,29 +324,36 @@ def char_select():
             sg.Button(button_text='F22', button_color='MediumOrchid1', size=(4, 1)),
             sg.Button(button_text='F23', button_color='MediumOrchid1', size=(4, 1)),
             sg.Button(button_text='F24', button_color='MediumOrchid1', size=(4, 1)),
+        ]
+    ]
+    crtl_keys = [
+        [
             sg.Button(button_text='accept', button_color='MediumOrchid1', size=(5, 1)),
             sg.Button(button_text='add', button_color='MediumOrchid1', size=(4, 1)),
             sg.Button(button_text='alt', button_color='MediumOrchid1', size=(4, 1)),
-        ],
-        [
             sg.Button(button_text='altleft', button_color='MediumOrchid1', size=(5, 1)),
             sg.Button(button_text='altright', button_color='MediumOrchid1', size=(5, 1)),
+        ],
+        [
             sg.Button(button_text='backspace', button_color='MediumOrchid1', size=(8, 1)),
             sg.Button(button_text='browserback', button_color='MediumOrchid1', size=(9, 1)),
+            sg.Button(button_text='browserfavorites', button_color='MediumOrchid1', size=(11, 1)),
         ],
         [
-            sg.Button(button_text='browserfavorites', button_color='MediumOrchid1', size=(11, 1)),
             sg.Button(button_text='browserforward', button_color='MediumOrchid1', size=(10, 1)),
             sg.Button(button_text='browserhome', button_color='MediumOrchid1', size=(9, 1)),
+            sg.Button(button_text='browserrefresh', button_color='MediumOrchid1', size=(10, 1)),
         ],
         [
-            sg.Button(button_text='browserrefresh', button_color='MediumOrchid1', size=(10, 1)),
             sg.Button(button_text='browsersearch', button_color='MediumOrchid1', size=(10, 1)),
         ]
-    ]
+]
+    selector = [[sg.Combo(default_value='Function Keys', size=(15, 5), readonly=True, values=categories, enable_events=True, key='-slc-')]]
     layout = [
+        [sg.pin(sg.Column(selector, visible=False, key='-sel-'))],
         [sg.pin(sg.Column(chars, size=(320, 140), scrollable=True, vertical_scroll_only=True, visible=True, key='-sim-'))],
-        [sg.pin(sg.Column(sp_chars, size=(320, 140), scrollable=True, vertical_scroll_only=True, visible=False, key='-adv-'))],
+        [sg.pin(sg.Column(func_keys, size=(320, 140), scrollable=True, vertical_scroll_only=True, visible=False, key='-fun-'))],
+        [sg.pin(sg.Column(crtl_keys, size=(320, 140), scrollable=True, vertical_scroll_only=True, visible=False, key='-crt-'))],
         [sg.T("Selected:"), sg.T(chosen, key='-sho-')],
         [sg.Button(button_text='Select', key='Exit'), sg.Button(button_text='Special Inputs', key='-spe-')]
     ]
@@ -361,11 +369,20 @@ def char_select():
                 if sim == True:
                     sim = False
                     window['-sim-'].update(visible=False)
-                    window['-adv-'].update(visible=True)
+                    window['-sel-'].update(visible=True)
+                    window['-fun-'].update(visible=True)
                 else:
                     sim = True
                     window['-sim-'].update(visible=True)
-                    window['-adv-'].update(visible=False)
+                    window['-sel-'].update(visible=False)
+                    window['-fun-'].update(visible=False)
+            case '-slc-':
+                if values['-slc-'] == 'Function Keys':
+                    window['-crt-'].update(visible=False)
+                    window['-fun-'].update(visible=True)
+                elif values['-slc-'] == 'Control Keys':
+                    window['-fun-'].update(visible=False)
+                    window['-crt-'].update(visible=True)
             case '-a-':
                 chosen = 'a'
                 window['-sho-'].update(chosen)
@@ -444,8 +461,149 @@ def char_select():
             case '-z-':
                 chosen = 'z'
                 window['-sho-'].update(chosen)
+            case '-0-':
+                chosen = '0'
+                window['-sho-'].update(chosen)
+            case '-1-':
+                chosen = '1'
+                window['-sho-'].update(chosen)
+            case '-2-':
+                chosen = '2'
+                window['-sho-'].update(chosen)
+            case '-3-':
+                chosen = '3'
+                window['-sho-'].update(chosen)
+            case '-4-':
+                chosen = '4'
+                window['-sho-'].update(chosen)
+            case '-5-':
+                chosen = '5'
+                window['-sho-'].update(chosen)
+            case '-6-':
+                chosen = '6'
+                window['-sho-'].update(chosen)
+            case '-7-':
+                chosen = '7'
+                window['-sho-'].update(chosen)
+            case '-8-':
+                chosen = '8'
+                window['-sho-'].update(chosen)
+            case '-9-':
+                chosen = '9'
+                window['-sho-'].update(chosen)
+            case '-!-':
+                chosen = '!'
+                window['-sho-'].update(chosen)
+            case '-"-':
+                chosen = '"'
+                window['-sho-'].update(chosen)
+            case '-#-':
+                chosen = '#'
+                window['-sho-'].update(chosen)
+            case '-$-':
+                chosen = '$'
+                window['-sho-'].update(chosen)
+            case '-%-':
+                chosen = '%'
+                window['-sho-'].update(chosen)
+            case '-&-':
+                chosen = '&'
+                window['-sho-'].update(chosen)
+            case "-'-":
+                chosen = "'"
+                window['-sho-'].update(chosen)
+            case '-(-':
+                chosen = '('
+                window['-sho-'].update(chosen)
+            case '-)-':
+                chosen = ')'
+                window['-sho-'].update(chosen)
+            case '-*-':
+                chosen = '*'
+                window['-sho-'].update(chosen)
+            case '-+-':
+                chosen = '+'
+                window['-sho-'].update(chosen)
+            case '-,-':
+                chosen = ','
+                window['-sho-'].update(chosen)
+            case '---':
+                chosen = '-'
+                window['-sho-'].update(chosen)
+            case '-.-':
+                chosen = '.'
+                window['-sho-'].update(chosen)
+            case '-/-':
+                chosen = '/'
+                window['-sho-'].update(chosen)
+            case '-:-':
+                chosen = ':'
+                window['-sho-'].update(chosen)
+            case '-;-':
+                chosen = ';'
+                window['-sho-'].update(chosen)
+            case '-<-':
+                chosen = '<'
+                window['-sho-'].update(chosen)
+            case '-=-':
+                chosen = '='
+                window['-sho-'].update(chosen)
+            case '->-':
+                chosen = '>'
+                window['-sho-'].update(chosen)
+            case '-?-':
+                chosen = '?'
+                window['-sho-'].update(chosen)
+            case '-@-':
+                chosen = '@'
+                window['-sho-'].update(chosen)
+            case '-[-':
+                chosen = '['
+                window['-sho-'].update(chosen)
+            case '-]-':
+                chosen = ']'
+                window['-sho-'].update(chosen)
+            case '-^-':
+                chosen = '^'
+                window['-sho-'].update(chosen)
+            case '-_-':
+                chosen = '_'
+                window['-sho-'].update(chosen)
+            case '-`-':
+                chosen = '`'
+                window['-sho-'].update(chosen)
+            case '-{-':
+                chosen = '{'
+                window['-sho-'].update(chosen)
+            case '-|-':
+                chosen = '|'
+                window['-sho-'].update(chosen)
+            case '-}-':
+                chosen = '}'
+                window['-sho-'].update(chosen)
+            case '-~-':
+                chosen = '~'
+                window['-sho-'].update(chosen)
+            case '-tab-':
+                chosen = '\\t'
+                window['-sho-'].update(chosen)
+            case '-new-':
+                chosen = '\\n'
+                window['-sho-'].update(chosen)
+            case '-rew-':
+                chosen = '\\r'
+                window['-sho-'].update(chosen)
+            case '-bac-':
+                chosen = '\\\\'
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
     window.close()
-    return chosen
+    if chosen != 'Nothing selected':
+        return chosen
+    else:
+        return ''
 
 # ------ Event Loop ------
 
