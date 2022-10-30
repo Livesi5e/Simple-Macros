@@ -14,15 +14,14 @@ list = ("Mouse Movement", "Mouse Click", "Keyboard Input")
 mb = ("Left", "Middle", "Right")
 amm = ("Single", "Multiple")
 cr = []
-macros = []
+macros = [['test', [[0, 1, 1], [0, 100, 1], [0, 1, 1]]],['test2']]
 sel=''
+sel_mac = ''
 view = "Nothing here yet"
 font = ("Arial", 12)
 visible = False
 multiple = False
 single = True
-
-print(pag.KEYBOARD_KEYS)
 
 # All window components
 
@@ -132,14 +131,17 @@ current_macro = [
 
 your_macros = [
     [
-        sg.Submit(button_text="New", key='-new-', visible=True)
-    ]
-]
-
-line = [
-    [
-        sg.VerticalSeparator()
-    ]
+        sg.Table(
+            values=macros,
+            headings=['Macros'],
+            num_rows=10,
+            alternating_row_color='green',
+            key='-mac-',
+            enable_events=True,
+            justification='center',
+        )
+    ],
+    [sg.Button(button_text='New', key='-new-'), sg.Button(button_text='Delete', key='-del-'), sg.Submit(button_text='Run', key='-run-')]
 ]
 
 # ------ Full layout ------
@@ -175,7 +177,10 @@ def UpdateMid():
                     key = 'MMB'
             old = temp + 'Mouse Button Click at\n' + 'x: ' + str(x[2]) + ' ' + 'y: ' + str(x[3]) + '\nKey: ' + key + '\nAmmount of Clicks: ' + str(x[4]) + '\nTime between clicks: ' + str(x[5]) + '\n\n'
         elif x[0] == 2:
-            old = temp + 'Keyboard Input:\n' + x[1] + '\n\n'
+            try:
+                old = temp + 'Keyboard Input:\n' + x[1] + '\n\n'
+            except:
+                old = temp + 'Keyboard Input:\n' + x[1][0] + '\n\n'
     return old
 
 def Reset():
@@ -197,6 +202,25 @@ def toggle(change):
     else:
         change = True
     return change
+
+def Run(mac):
+    print(mac)
+    for x in mac[1]:
+        match x[0]:
+            case 0:
+                pag.moveTo(x[1], x[2], 0.5)
+            case 1:
+                if x[1] == 3:
+                    button = 'left'
+                elif x[1] == 4:
+                    button = 'right'
+                elif x[1] == 5:
+                    button = 'middle'
+                pag.click(x=x[2], y=x[3], clicks=x[4], interval=x[5],button=button)
+            case 2:
+                pag.typewrite(x[1])
+            case _:
+                print('NaN')
 
 def char_select():
     sim = True
@@ -294,36 +318,36 @@ def char_select():
     ]
     func_keys=[
         [
-            sg.Button(button_text='F1', button_color='MediumOrchid1', size=(2, 1)), 
-            sg.Button(button_text='F2', button_color='MediumOrchid1', size=(2, 1)),
-            sg.Button(button_text='F3', button_color='MediumOrchid1', size=(2, 1)),
-            sg.Button(button_text='F4', button_color='MediumOrchid1', size=(2, 1)),
-            sg.Button(button_text='F5', button_color='MediumOrchid1', size=(2, 1)),
-            sg.Button(button_text='F6', button_color='MediumOrchid1', size=(2, 1)),
-            sg.Button(button_text="F7", button_color='MediumOrchid1', size=(2, 1)),
-            sg.Button(button_text='F8', button_color='MediumOrchid1', size=(2, 1)),
-            sg.Button(button_text='F9', button_color='MediumOrchid1', size=(2, 1)),
+            sg.Button(button_text='F1', button_color='MediumOrchid1', size=(2, 1), key='-F1-'), 
+            sg.Button(button_text='F2', button_color='MediumOrchid1', size=(2, 1), key='-F2-'),
+            sg.Button(button_text='F3', button_color='MediumOrchid1', size=(2, 1), key='-F3-'),
+            sg.Button(button_text='F4', button_color='MediumOrchid1', size=(2, 1), key='-F4-'),
+            sg.Button(button_text='F5', button_color='MediumOrchid1', size=(2, 1), key='-F5-'),
+            sg.Button(button_text='F6', button_color='MediumOrchid1', size=(2, 1), key='-F6-'),
+            sg.Button(button_text="F7", button_color='MediumOrchid1', size=(2, 1), key='-F7-'),
+            sg.Button(button_text='F8', button_color='MediumOrchid1', size=(2, 1), key='-F8-'),
+            sg.Button(button_text='F9', button_color='MediumOrchid1', size=(2, 1), key='-F9-'),
         ],
         [
-            sg.Button(button_text='F10', button_color='MediumOrchid1', size=(4, 1)),
-            sg.Button(button_text='F11', button_color='MediumOrchid1', size=(4, 1)),
-            sg.Button(button_text='F12', button_color='MediumOrchid1', size=(4, 1)),
-            sg.Button(button_text='F13', button_color='MediumOrchid1', size=(4, 1)),
-            sg.Button(button_text='F14', button_color='MediumOrchid1', size=(4, 1)),
-            sg.Button(button_text='F15', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F10', button_color='MediumOrchid1', size=(4, 1), key='-F10-'),
+            sg.Button(button_text='F11', button_color='MediumOrchid1', size=(4, 1), key='-F11-'),
+            sg.Button(button_text='F12', button_color='MediumOrchid1', size=(4, 1), key='-F12-'),
+            sg.Button(button_text='F13', button_color='MediumOrchid1', size=(4, 1), key='-F13-'),
+            sg.Button(button_text='F14', button_color='MediumOrchid1', size=(4, 1), key='-F14-'),
+            sg.Button(button_text='F15', button_color='MediumOrchid1', size=(4, 1), key='-F15-'),
         ],
         [
-            sg.Button(button_text='F16', button_color='MediumOrchid1', size=(4, 1)),
-            sg.Button(button_text='F17', button_color='MediumOrchid1', size=(4, 1)),
-            sg.Button(button_text='F18', button_color='MediumOrchid1', size=(4, 1)),
-            sg.Button(button_text='F19', button_color='MediumOrchid1', size=(4, 1)),
-            sg.Button(button_text='F20', button_color='MediumOrchid1', size=(4, 1)),
-            sg.Button(button_text='F21', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F16', button_color='MediumOrchid1', size=(4, 1), key='-F16-'),
+            sg.Button(button_text='F17', button_color='MediumOrchid1', size=(4, 1), key='-F17-'),
+            sg.Button(button_text='F18', button_color='MediumOrchid1', size=(4, 1), key='-F18-'),
+            sg.Button(button_text='F19', button_color='MediumOrchid1', size=(4, 1), key='-F19-'),
+            sg.Button(button_text='F20', button_color='MediumOrchid1', size=(4, 1), key='-F20-'),
+            sg.Button(button_text='F21', button_color='MediumOrchid1', size=(4, 1), key='-F21-'),
         ],
         [
-            sg.Button(button_text='F22', button_color='MediumOrchid1', size=(4, 1)),
-            sg.Button(button_text='F23', button_color='MediumOrchid1', size=(4, 1)),
-            sg.Button(button_text='F24', button_color='MediumOrchid1', size=(4, 1)),
+            sg.Button(button_text='F22', button_color='MediumOrchid1', size=(4, 1), key='-F22-'),
+            sg.Button(button_text='F23', button_color='MediumOrchid1', size=(4, 1), key='-F23-'),
+            sg.Button(button_text='F24', button_color='MediumOrchid1', size=(4, 1), key='-F24-'),
         ]
     ]
     crtl_keys = [
@@ -599,6 +623,78 @@ def char_select():
             case '-spc-':
                 chosen = ' '
                 window['-sho-'].update(chosen)
+            case '-F1-':
+                chosen = 'F1'
+                window['-sho-'].update(chosen)
+            case '-F2-':
+                chosen = 'F2'
+                window['-sho-'].update(chosen)
+            case '-F3-':
+                chosen = 'F3'
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
+            case '-spc-':
+                chosen = ' '
+                window['-sho-'].update(chosen)
     window.close()
     if chosen != 'Nothing selected':
         return chosen
@@ -638,14 +734,15 @@ while True:
         if values["-amm-"] == 'Single':
             single = True
             multiple = False
+            window['-amm-'].update('Single')
             window["-akm-"].update(visible=multiple)
             window["-aks-"].update(visible=single)
         else:
             single = False
             multiple = True
+            window['-amm-'].update('Multiple')
             window["-aks-"].update(visible=single)
             window["-akm-"].update(visible=multiple)
-        Reset()
     elif event == "-am-":
         if values['-mmx-'] != '' and values['-mmy-'] != '':
             cr.append([0, int(values['-mmx-']), int(values['-mmy-'])])
@@ -678,7 +775,7 @@ while True:
             if values['-mct-'] == '':
                 time = 0.2
             else:
-                time = int(values['-mct-'])
+                time = float(values['-mct-'])
             cr.append([1, button, int(values['-mcx-']), int(values['-mcy-']), amt, time])
             view = UpdateMid()
             window['-cre-'].update(visible=True)
@@ -690,7 +787,7 @@ while True:
         Reset()
         if values['-amm-'] == 'Single':
             if sel != 'Nothing selected' and sel != '':
-                cr.append([2, sel])
+                cr.append([2, [sel]])
                 view = UpdateMid()
                 window['-cur-'].update(view)
                 window['-cre-'].update(visible=True)
@@ -709,10 +806,10 @@ while True:
     elif event == "-cre-":
         if values['-crn-'] != '':
             macros.append([values['-crn-'], cr])
-            print(len(macros))
-            new_row = [[sg.Button(button_text=values['-crn-'])]]
-            window.extend_layout(window['-ymc-'], new_row)
+            cr = []
             view = "Nothing here yet"
+            window['-crn-'].update('')
+            window['-mac-'].update(values=macros)
             window['-cre-'].update(visible=False)
             window['-crn-'].update(visible=False)
             window['-cur-'].update(view)
@@ -723,5 +820,18 @@ while True:
     elif event == '-cho-':
         sel = char_select()
         window['-cho-'].update(sel)
+    elif event == '-del-':
+        sel_mac = [macros[row] for row in values['-mac-']]
+        try:
+            macros.remove(sel_mac[0])
+        except:
+            messagebox.showinfo('Warning', 'Select an entry to delete')
+        window['-mac-'].update(values=macros)
+    elif event == '-run-':
+        sel_mac = [macros[row] for row in values['-mac-']]
+        try:
+            Run(sel_mac[0])
+        except:
+            messagebox.showinfo('Warning', 'Select an entry to run')
 
 window.close()
