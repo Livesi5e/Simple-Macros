@@ -1,13 +1,15 @@
 # An Application to program your own macros and use them globally
 #
-# Does not support recording
+# Does not support macro recording
 
-from turtle import color, ht
 import PySimpleGUI as sg
 import pyautogui as pag
 import tkinter
 from tkinter import messagebox
+from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import asksaveasfile
 import keyboard
+import json
 
 # Inital variables
 
@@ -27,6 +29,7 @@ font = ("Arial", 12)
 visible = False
 multiple = False
 single = True
+save = ''
 
 # All window components
 
@@ -148,7 +151,7 @@ your_macros = [
             justification='center',
         )
     ],
-    [sg.Button(button_text='New', key='-new-'), sg.Button(button_text='Delete', key='-del-'), sg.Submit(button_text='Run', key='-run-')]
+    [sg.Button(button_text='New', key='-new-'), sg.Button(button_text='Delete', key='-del-'), sg.Submit(button_text='Run', key='-run-'), sg.Button(button_text='Load', key='-lod-'), sg.Button(button_text='Save', key='-sve-')]
 ]
 
 # ------ Full layout ------
@@ -203,6 +206,16 @@ def ResetAdv():
     window['-mca-'].update('')
     window['-mct-'].update('')
 
+def load(save):
+    i = 0
+    with open(save, 'r') as f:
+        text = f.read()
+        macros = json.loads(text)
+    for x in macros:
+        keyboard.add_hotkey(x[1], lambda x = i: Run(macros[x]))
+        i += 1
+    return macros
+
 def toggle(change):
     if change == True:
         change = False
@@ -227,9 +240,6 @@ def Run(mac):
                 pag.typewrite(x[1])
             case _:
                 print('NaN')
-
-
-    
 
 def char_select():
     sim = True
@@ -859,5 +869,16 @@ while True:
     elif event == '-htk-':
         htky = keyboard.read_hotkey()
         window['-hts-'].update(htky)
+    elif event == '-lod-':
+        save = askopenfilename(filetypes=[("Macro files", "*.macros")])
+        macros = load(save)
+        window['-mac-'].update(values=macros)
+    elif event == '-sve-':
+        f = asksaveasfile(mode='w', defaultextension='.macros', filetypes=[("Macro files", "*.macros")])
+        if f is None:
+            break
+        text2save = json.dumps(macros)
+        f.write(text2save)
+        f.close()
 
 window.close()
