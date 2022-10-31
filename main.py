@@ -208,6 +208,7 @@ def ResetAdv():
 
 def load(save):
     i = 0
+    keyboard.clear_all_hotkeys()
     with open(save, 'r') as f:
         text = f.read()
         macros = json.loads(text)
@@ -871,14 +872,14 @@ while True:
         window['-hts-'].update(htky)
     elif event == '-lod-':
         save = askopenfilename(filetypes=[("Macro files", "*.macros")])
-        macros = load(save)
+        if save != '':
+            macros = load(save)
         window['-mac-'].update(values=macros)
     elif event == '-sve-':
         f = asksaveasfile(mode='w', defaultextension='.macros', filetypes=[("Macro files", "*.macros")])
-        if f is None:
-            break
-        text2save = json.dumps(macros)
-        f.write(text2save)
-        f.close()
+        if f != None:
+            text2save = json.dumps(macros)
+            f.write(text2save)
+            f.close()
 
 window.close()
