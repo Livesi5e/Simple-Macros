@@ -208,7 +208,6 @@ def ResetAdv():
 
 def load(save):
     i = 0
-    keyboard.clear_all_hotkeys()
     with open(save, 'r') as f:
         text = f.read()
         macros = json.loads(text)
