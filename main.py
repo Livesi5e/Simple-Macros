@@ -821,6 +821,7 @@ while True:
         except:
             messagebox.showinfo('Warning', 'Select an entry to run')
     elif event == '-htk-':
+        htky = ''
         htky = keyboard.read_hotkey()
         window['-hts-'].update(htky)
     elif event == '-lod-':
