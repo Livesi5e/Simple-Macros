@@ -31,6 +31,8 @@ multiple = False
 single = True
 save = ''
 
+print(pag.KEYBOARD_KEYS)
+
 # All window components
 
 root = tkinter.Tk()
@@ -237,6 +239,7 @@ def Run(mac):
                     button = 'middle'
                 pag.click(x=x[2], y=x[3], clicks=x[4], interval=x[5],button=button)
             case 2:
+                print(x[1])
                 pag.typewrite(x[1])
             case _:
                 print('NaN')
@@ -328,11 +331,13 @@ def char_select():
             sg.Button(button_text='|', button_color='NavyBlue', size=(2, 1), key='-|-'),
             sg.Button(button_text='}', button_color='NavyBlue', size=(2, 1), key='-}-'),
             sg.Button(button_text='~', button_color='NavyBlue', size=(2, 1), key='-~-'),
-            sg.Button(button_text='\\t', button_color='NavyBlue', size=(2, 1), key='-tab-'),
-            sg.Button(button_text='\\n', button_color='NavyBlue', size=(2, 1), key='-new-'),
-            sg.Button(button_text="\\r", button_color='NavyBlue', size=(2, 1), key='-rew-'),
-            sg.Button(button_text='\\\\', button_color='NavyBlue', size=(2, 1), key='-bac-'),
-            sg.Button(button_text=' ', button_color='NavyBlue', size=(2, 1), key='-spc-'),
+            sg.Button(button_text='Enter', button_color='NavyBlue', size=(4, 1), key='-ent-'), 
+            sg.Button(button_text='Space', button_color='NavyBlue', size=(5, 1), key='-spa-'),
+            sg.Button(button_text='Control', button_color='NavyBlue', size=(6, 1), key='-crt-'),
+        ],
+        [
+            sg.Button(button_text='Alt', button_color='NavyBlue', size=(4, 1), key='-alt-'),
+            sg.Button(button_text='Tab', button_color='NavyBlue', size=(4, 1), key='-tab-'),
         ],
     ]
     func_keys=[
@@ -629,9 +634,6 @@ def char_select():
             case '-~-':
                 chosen = '~'
                 window['-sho-'].update(chosen)
-            case '-tab-':
-                chosen = '\\t'
-                window['-sho-'].update(chosen)
             case '-new-':
                 chosen = '\\n'
                 window['-sho-'].update(chosen)
@@ -653,68 +655,20 @@ def char_select():
             case '-F3-':
                 chosen = 'F3'
                 window['-sho-'].update(chosen)
-            case '-spc-':
+            case '-spa-':
                 chosen = ' '
                 window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
+            case '-ent-':
+                chosen = 'enter'
                 window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
+            case '-crt-':
+                chosen = 'crtl'
                 window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
+            case '-alt-':
+                chosen = 'alt'
                 window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
-                window['-sho-'].update(chosen)
-            case '-spc-':
-                chosen = ' '
+            case '-tab-':
+                chosen = 'tab'
                 window['-sho-'].update(chosen)
     window.close()
     if chosen != 'Nothing selected':
