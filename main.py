@@ -856,10 +856,10 @@ while True:
         sel_mac = [macros[row] for row in values['-mac-']]
         try:
             macros.remove(sel_mac[0])
+            keyboard.remove_hotkey(sel_mac[0][3])
         except:
             messagebox.showinfo('Warning', 'Select an entry to delete')
         window['-mac-'].update(values=macros)
-        keyboard.remove_hotkey(sel_mac[0][3])
     elif event == '-run-':
         sel_mac = [macros[row] for row in values['-mac-']]
         try:
