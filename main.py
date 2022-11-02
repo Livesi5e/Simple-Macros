@@ -856,7 +856,7 @@ while True:
                 messagebox.showerror('Warning', 'Please enter a text and try again')
     elif event == "-cre-":
         if values['-crn-'] != '':
-            macros.append([values['-crn-'], htky, cr, htky])
+            macros.append([values['-crn-'], htky, cr])
             keyboard.add_hotkey(htky, lambda x = len(macros) - 1: Run(macros[x]))
             cr = []
             view = "Nothing here yet"
