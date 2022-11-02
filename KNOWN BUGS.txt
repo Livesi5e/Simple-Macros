@@ -9,3 +9,4 @@ Todo list:
 TODO Add keys to the single key window
 TODO Add a remove button to the create macro page
 TODO Add a rebind hotkey button
+TODO Simplify the saved file to save space
