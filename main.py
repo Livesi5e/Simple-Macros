@@ -20,8 +20,6 @@ cr = []
 htky = ''
 hotkeys = []
 macros = []
-bindings = []
-id = 0
 sel=''
 sel_mac = ''
 view = "Nothing here yet"
@@ -30,8 +28,6 @@ visible = False
 multiple = False
 single = True
 save = ''
-
-print(pag.KEYBOARD_KEYS)
 
 # All window components
 
@@ -239,7 +235,6 @@ def Run(mac):
                     button = 'middle'
                 pag.click(x=x[2], y=x[3], clicks=x[4], interval=x[5],button=button)
             case 2:
-                print(x[1])
                 pag.typewrite(x[1])
             case _:
                 print('NaN')
@@ -431,7 +426,6 @@ def char_select():
                     window['-sel-'].update(visible=False)
                     window['-fun-'].update(visible=False)
             case '-slc-':
-                print(f'{values["-slc-"]=}')
                 if values['-slc-'] == 'Function Keys':
                     window['-crt-'].update(visible=False)
                     window['-fun-'].update(visible=True)
