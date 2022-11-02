@@ -1,0 +1,11 @@
+Bug list:
+
+BUG While pressing Hotkeys, random Inputs will be filled in and wont be resettet
+BUG Cant rerecord Hotkeys. Hotkeys will break if this is tried
+BUG Seperator arent disabled while not being in new hotkey
+
+Todo list:
+
+TODO Add keys to the single key window
+TODO Add a remove button to the create macro page
+TODO Add a rebind hotkey button

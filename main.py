@@ -244,6 +244,10 @@ def Run(mac):
             case _:
                 print('NaN')
 
+def get_Hotkey():
+    temp = keyboard.read_hotkey()
+    return temp
+
 def char_select():
     sim = True
     chosen = 'Nothing selected'
@@ -333,7 +337,7 @@ def char_select():
             sg.Button(button_text='~', button_color='NavyBlue', size=(2, 1), key='-~-'),
             sg.Button(button_text='Enter', button_color='NavyBlue', size=(4, 1), key='-ent-'), 
             sg.Button(button_text='Space', button_color='NavyBlue', size=(5, 1), key='-spa-'),
-            sg.Button(button_text='Control', button_color='NavyBlue', size=(6, 1), key='-crt-'),
+            sg.Button(button_text='Control', button_color='NavyBlue', size=(6, 1), key='-crl-'),
         ],
         [
             sg.Button(button_text='Alt', button_color='NavyBlue', size=(4, 1), key='-alt-'),
@@ -427,6 +431,7 @@ def char_select():
                     window['-sel-'].update(visible=False)
                     window['-fun-'].update(visible=False)
             case '-slc-':
+                print(f'{values["-slc-"]=}')
                 if values['-slc-'] == 'Function Keys':
                     window['-crt-'].update(visible=False)
                     window['-fun-'].update(visible=True)
@@ -655,13 +660,76 @@ def char_select():
             case '-F3-':
                 chosen = 'F3'
                 window['-sho-'].update(chosen)
+            case '-F4-':
+                chosen = 'F4'
+                window['-sho-'].update(chosen)
+            case '-F5-':
+                chosen = 'F5'
+                window['-sho-'].update(chosen)
+            case '-F6-':
+                chosen = 'F6'
+                window['-sho-'].update(chosen)
+            case '-F7-':
+                chosen = 'F7'
+                window['-sho-'].update(chosen)
+            case '-F8-':
+                chosen = 'F8'
+                window['-sho-'].update(chosen)
+            case '-F9-':
+                chosen = 'F9'
+                window['-sho-'].update(chosen)
+            case '-F10-':
+                chosen = 'F10'
+                window['-sho-'].update(chosen)
+            case '-F11-':
+                chosen = 'F11'
+                window['-sho-'].update(chosen)
+            case '-F12-':
+                chosen = 'F12'
+                window['-sho-'].update(chosen)
+            case '-F13-':
+                chosen = 'F13'
+                window['-sho-'].update(chosen)
+            case '-F14-':
+                chosen = 'F14'
+                window['-sho-'].update(chosen)
+            case '-F15-':
+                chosen = 'F15'
+                window['-sho-'].update(chosen)
+            case '-F16-':
+                chosen = 'F16'
+                window['-sho-'].update(chosen)
+            case '-F17-':
+                chosen = 'F17'
+                window['-sho-'].update(chosen)
+            case '-F18-':
+                chosen = 'F18'
+                window['-sho-'].update(chosen)
+            case '-F19-':
+                chosen = 'F19'
+                window['-sho-'].update(chosen)
+            case '-F20-':
+                chosen = 'F20'
+                window['-sho-'].update(chosen)
+            case '-F21-':
+                chosen = 'F21'
+                window['-sho-'].update(chosen)
+            case '-F22-':
+                chosen = 'F22'
+                window['-sho-'].update(chosen)
+            case '-F23-':
+                chosen = 'F23'
+                window['-sho-'].update(chosen)
+            case '-F24-':
+                chosen = 'F24'
+                window['-sho-'].update(chosen)
             case '-spa-':
                 chosen = ' '
                 window['-sho-'].update(chosen)
             case '-ent-':
                 chosen = 'enter'
                 window['-sho-'].update(chosen)
-            case '-crt-':
+            case '-crl-':
                 chosen = 'crtl'
                 window['-sho-'].update(chosen)
             case '-alt-':
@@ -822,7 +890,7 @@ while True:
             messagebox.showinfo('Warning', 'Select an entry to run')
     elif event == '-htk-':
         htky = ''
-        htky = keyboard.read_hotkey()
+        htky = get_Hotkey()
         window['-hts-'].update(htky)
     elif event == '-lod-':
         save = askopenfilename(filetypes=[("Macro files", "*.macros")])
