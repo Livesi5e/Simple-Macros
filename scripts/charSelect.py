@@ -168,6 +168,11 @@ def charSelector():
             sg.Button(button_text='browsersearch', button_color='NavyBlue', size=(10, 1)),
             sg.Button(button_text='browsertop', button_color='NavyBlue', size=(8, 1)),
             sg.Button(button_text='browsersearch', button_color='NavyBlue', size=(10, 1)),
+        ],
+        [            
+            sg.Button(button_text='capslock', button_color='NavyBlue', size=(7, 1)),
+            sg.Button(button_text='browsersearch', button_color='NavyBlue', size=(10, 1)),
+
         ]
     ]
 
@@ -535,3 +540,7 @@ def charSelector():
         return chosen
     else:
         return ''
+
+# ------ Test code ------
+
+test = charSelector()

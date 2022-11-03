@@ -12,6 +12,8 @@ import keyboard
 import json
 from scripts.charSelect import charSelector
 
+print(pag.KEYBOARD_KEYS)
+
 # Inital variables
 
 list = ("Mouse Movement", "Mouse Click", "Keyboard Input")
