@@ -2,6 +2,9 @@
 # surrounding character selection
 
 import PySimpleGUI as sg
+import pyautogui as pag
+
+print(pag.KEYBOARD_KEYS)
 
 # ------ Importable Functions ------
 
@@ -172,7 +175,6 @@ def charSelector():
         [            
             sg.Button(button_text='capslock', button_color='NavyBlue', size=(7, 1)),
             sg.Button(button_text='browsersearch', button_color='NavyBlue', size=(10, 1)),
-
         ]
     ]
 
