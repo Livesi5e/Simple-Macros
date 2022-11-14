@@ -7,12 +7,9 @@ import pyautogui as pag
 import tkinter
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
-from tkinter.filedialog import asksaveasfile
 import keyboard
-import json
 from scripts.charSelect import charSelector
-
-print(pag.KEYBOARD_KEYS)
+from scripts.DataManagement import load, save
 
 # Inital variables
 
@@ -30,7 +27,6 @@ font = ("Arial", 12)
 visible = False
 multiple = False
 single = True
-save = ''
 
 # All window components
 
@@ -206,16 +202,6 @@ def Reset():
 def ResetAdv():
     window['-mca-'].update('')
     window['-mct-'].update('')
-
-def load(save):
-    i = 0
-    with open(save, 'r') as f:
-        text = f.read()
-        macros = json.loads(text)
-    for x in macros:
-        keyboard.add_hotkey(x[1], lambda x = i: Run(macros[x]))
-        i += 1
-    return macros
 
 def toggle(change):
     if change == True:
@@ -402,15 +388,13 @@ while True:
         htky = get_Hotkey()
         window['-hts-'].update(htky)
     elif event == '-lod-':
-        save = askopenfilename(filetypes=[("Macro files", "*.macros")])
-        if save != '':
-            macros = load(save)
+        loading = askopenfilename(filetypes=[("Macro files", "*.macros")])
+        if loading != '':
+            if macros != []:
+                keyboard.remove_all_hotkeys()
+            macros = load(loading, macros, Run)
         window['-mac-'].update(values=macros)
     elif event == '-sve-':
-        f = asksaveasfile(mode='w', defaultextension='.macros', filetypes=[("Macro files", "*.macros")])
-        if f != None:
-            text2save = json.dumps(macros)
-            f.write(text2save)
-            f.close()
+        save(macros)
 
 window.close()
