@@ -392,8 +392,11 @@ while True:
         if loading != '':
             if macros != []:
                 keyboard.remove_all_hotkeys()
-            macros = load(loading, macros, Run)
+            macros = load(loading, macros)
         window['-mac-'].update(values=macros)
+        i = 0
+        for x in macros:
+            keyboard.add_hotkey(x[1], lambda x = i: Run(macros[x]))
     elif event == '-sve-':
         save(macros)
 
