@@ -270,6 +270,11 @@ def load_hotkeys():
     for x in macros:
         keyboard.add_hotkey(x[1], lambda x = i: Run(macros[x]))
 
+# Toggles the inputfields
+def ToggleInp(x):
+    for x in Inputs:
+        x.update(disabled=x)
+
 # ------ Event Loop ------
 #   Window will check for user inputs and 
 #   respond accordingly. Check for update
@@ -279,6 +284,7 @@ def load_hotkeys():
 #       values are the values for every component
 #       in the window
 
+Inputs = [window["-akmi-"],window["-mca-"],window["-mct-"],window["-mcx-"],window["-mcy-"],window["-mmx-"],window["-mmy-"],window["-crn-"]]
 while True:
     event, values = window.read()
     match event:
@@ -288,7 +294,6 @@ while True:
             window['-left-'].update(visible=True)
             window['-mid-'].update(visible=True)
         case "-cat-":
-            new_add = []
             combo = values["-cat-"]
             Reset()
             if combo == 'Mouse Movement':
@@ -420,9 +425,11 @@ while True:
             except:
                 messagebox.showinfo('Warning', 'Select an entry to run')
         case '-htk-':
+            ToggleInp(False)
             htky = ''
             htky = get_Hotkey()
             window['-hts-'].update(htky)
+            ToggleInp(True)
         case '-lod-':
             loading = askopenfilename(filetypes=[("Macro files", "*.macros")])
             if loading != '':
