@@ -10,6 +10,7 @@ from tkinter.filedialog import askopenfilename
 import keyboard
 from scripts.charSelect import charSelector
 from scripts.DataManagement import load, save
+from scripts.Conversion import convert
 
 # Inital variables
 
@@ -229,8 +230,38 @@ def Run(mac):
                 print('NaN')
 
 def get_Hotkey():
-    temp = keyboard.read_hotkey()
-    return temp
+    layout = [[sg.T('Currently listening for Hotkey...')],[sg.Button('Finished', key='-fin-')]]
+    
+    window = sg.Window('Hotkey', layout)
+    keyboard.start_recording()
+
+    while True:
+        event, values = window.read()
+        match event:
+            case sg.WIN_CLOSED:
+                break
+            case '-fin-':
+                hotkey = ''
+                temp = keyboard.stop_recording()
+                for x in temp:
+                    found = True
+                    keys = hotkey.split('+')
+                    for y in keys:
+                        if y == convert(x):
+                            found = False
+                    if found and hotkey == '':
+                        hotkey += convert(x)
+                    elif found:
+                        hotkey += '+'
+                        hotkey += convert(x)
+                break
+    window.close()
+    return hotkey
+
+def load_hotkeys():
+    i = 0
+    for x in macros:
+        keyboard.add_hotkey(x[1], lambda x = i: Run(macros[x]))
 
 # ------ Event Loop ------
 #   Window will check for user inputs and 
@@ -393,10 +424,8 @@ while True:
             if macros != []:
                 keyboard.remove_all_hotkeys()
             macros = load(loading, macros)
+            load_hotkeys()
         window['-mac-'].update(values=macros)
-        i = 0
-        for x in macros:
-            keyboard.add_hotkey(x[1], lambda x = i: Run(macros[x]))
     elif event == '-sve-':
         save(macros)
 

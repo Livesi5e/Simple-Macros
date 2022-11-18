@@ -1,9 +1,6 @@
 Bug list:
 
-BUG While pressing Hotkeys, random Inputs will be filled in and wont be resettet
-BUG Cant re-record Hotkeys while creating new Hotkey. Hotkey will break.
 BUG Seperator arent disabled while not being in new hotkey
-BUG Hotkeys with a control key in it only work once.
 
 Todo list:
 
@@ -14,3 +11,5 @@ TODO Add a rebind hotkey button
 Fixed stuff:
 
 [x] Simplify the saved file to save space
+[x] Cant re-record Hotkeys while creating new Hotkey. Hotkey will break.
+[x] Hotkeys with a control key in it only work once.
