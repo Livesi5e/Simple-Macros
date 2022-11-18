@@ -168,6 +168,7 @@ window = sg.Window("Simple Macros", layout)
 
 # ------ Functions ------
 
+# Updates the current macro page
 def UpdateMid():
     old = ''
     for x in cr:
@@ -191,6 +192,7 @@ def UpdateMid():
                 old = temp + 'Keyboard Input:\n' + x[1][0] + '\n\n'
     return old
 
+# Resets all inputs
 def Reset():
     window['-akmi-'].update('')
     window['-amm-'].update('Single')
@@ -200,10 +202,12 @@ def Reset():
     window['-mmx-'].update('')
     window['-mmy-'].update('')
 
+# Resets inputs of advanced mouse click
 def ResetAdv():
     window['-mca-'].update('')
     window['-mct-'].update('')
 
+# Toggles a boolean
 def toggle(change):
     if change == True:
         change = False
@@ -211,6 +215,7 @@ def toggle(change):
         change = True
     return change
 
+# Executes a macro based on the array input
 def Run(mac):
     for x in mac[2]:
         match x[0]:
@@ -229,6 +234,7 @@ def Run(mac):
             case _:
                 print('NaN')
 
+# Records a hotkey and returns it
 def get_Hotkey():
     layout = [[sg.T('Currently listening for Hotkey...')],[sg.Button('Finished', key='-fin-')]]
     
@@ -258,6 +264,7 @@ def get_Hotkey():
     window.close()
     return hotkey
 
+# adds all hotkeys from current macros
 def load_hotkeys():
     i = 0
     for x in macros:
@@ -274,159 +281,157 @@ def load_hotkeys():
 
 while True:
     event, values = window.read()
-    if event in (sg.WIN_CLOSED, 'Exit', 'Cancel'):
-        break
-    elif event == "-new-":
-        window['-left-'].update(visible=True)
-        window['-mid-'].update(visible=True)
-    elif event == "-cat-":
-        new_add = []
-        combo = values["-cat-"]
-        Reset()
-        if combo == 'Mouse Movement':
-            window["-keyinp-"].update(visible=False)
-            window["-mouseclick-"].update(visible=False)
-            window["-mousemove-"].update(visible=True)
-        if combo == 'Mouse Click':
-            window["-keyinp-"].update(visible=False)
-            window["-mousemove-"].update(visible=False)
-            window["-mouseclick-"].update(visible=True)
-        if combo == 'Keyboard Input':
-            window["-mousemove-"].update(visible=False)
-            window["-mouseclick-"].update(visible=False)
-            window["-keyinp-"].update(visible=True)
-    elif event == "-aca-":
-        visible = toggle(visible)
-        ResetAdv()
-        window["-adv-"].update(visible=visible)
-    elif event == "-amm-":
-        if values["-amm-"] == 'Single':
-            single = True
-            multiple = False
-            window['-amm-'].update('Single')
-            window["-akm-"].update(visible=multiple)
-            window["-aks-"].update(visible=single)
-        else:
-            single = False
-            multiple = True
-            window['-amm-'].update('Multiple')
-            window["-aks-"].update(visible=single)
-            window["-akm-"].update(visible=multiple)
-    elif event == "-am-":
-        if values['-mmx-'] != '' and values['-mmy-'] != '':
-            cr.append([0, int(values['-mmx-']), int(values['-mmy-'])])
+    match event:
+        case sg.WIN_CLOSED:
+            break
+        case "-new-":
+            window['-left-'].update(visible=True)
+            window['-mid-'].update(visible=True)
+        case "-cat-":
+            new_add = []
+            combo = values["-cat-"]
             Reset()
-            view = UpdateMid()
-            window['-cur-'].update(view)
-            window['-cre-'].update(visible=True)
-            window['-crn-'].update(visible=True)
-            window['-htk-'].update(visible=True)
-            window['-hts-'].update(visible=True)
-        else:
-            messagebox.showerror('Warning', 'Please add values and retry')
-    elif event == "-ac-":
-        if values['-mcx-'] != '' and values['-mcy-'] != '' and values['-mcb-'] != '':
-            Reset()
-            button = 0
-            match values['-mcb-']:
-                case 'Left':
+            if combo == 'Mouse Movement':
+                window["-keyinp-"].update(visible=False)
+                window["-mouseclick-"].update(visible=False)
+                window["-mousemove-"].update(visible=True)
+            if combo == 'Mouse Click':
+                window["-keyinp-"].update(visible=False)
+                window["-mousemove-"].update(visible=False)
+                window["-mouseclick-"].update(visible=True)
+            if combo == 'Keyboard Input':
+                window["-mousemove-"].update(visible=False)
+                window["-mouseclick-"].update(visible=False)
+                window["-keyinp-"].update(visible=True)
+        case "-aca-":
+            visible = toggle(visible)
+            ResetAdv()
+            window["-adv-"].update(visible=visible)
+        case "-amm-":
+            if values["-amm-"] == 'Single':
+                single = True
+                multiple = False
+                window['-amm-'].update('Single')
+                window["-akm-"].update(visible=multiple)
+                window["-aks-"].update(visible=single)
+            else:
+                single = False
+                multiple = True
+                window['-amm-'].update('Multiple')
+                window["-aks-"].update(visible=single)
+                window["-akm-"].update(visible=multiple)
+        case "-am-":
+            if values['-mmx-'] != '' and values['-mmy-'] != '':
+                cr.append([0, int(values['-mmx-']), int(values['-mmy-'])])
+                Reset()
+                view = UpdateMid()
+                window['-cur-'].update(view)
+                window['-cre-'].update(visible=True)
+                window['-crn-'].update(visible=True)
+                window['-htk-'].update(visible=True)
+                window['-hts-'].update(visible=True)
+            else:
+                messagebox.showerror('Warning', 'Please add values and retry')
+        case "-ac-":
+            if values['-mcx-'] != '' and values['-mcy-'] != '' and values['-mcb-'] != '':
+                Reset()
+                button = 0
+                if values['-mcb-'] == 'Left':
                     button = 3
-                case 'Right':
+                elif values['-mcb-'] == 'Right':
                     button = 4
-                case 'Middle':
+                elif values['-mcb-'] == 'Middle':
                     button = 5
-                case _:
-                    break
-            amt = 0
-            time = 0
-            if values['-mca-'] == '':
-                amt = 1
-            else:
-                amt = int(values['-mca-'])
-            if values['-mct-'] == '':
-                time = 0.2
-            else:
-                time = float(values['-mct-'])
-            cr.append([1, button, int(values['-mcx-']), int(values['-mcy-']), amt, time])
-            view = UpdateMid()
-            window['-cre-'].update(visible=True)
-            window['-crn-'].update(visible=True)
-            window['-htk-'].update(visible=True)
-            window['-hts-'].update(visible=True)
-            window['-cur-'].update(view)
-        else:
-            messagebox.showerror('Warning', 'Please add values and retry')
-    elif event == '-ak-':
-        Reset()
-        if values['-amm-'] == 'Single':
-            if sel != 'Nothing selected' and sel != '':
-                cr.append([2, [sel]])
+                amt = 0
+                time = 0
+                if values['-mca-'] == '':
+                    amt = 1
+                else:
+                    amt = int(values['-mca-'])
+                if values['-mct-'] == '':
+                    time = 0.2
+                else:
+                    time = float(values['-mct-'])
+                cr.append([1, button, int(values['-mcx-']), int(values['-mcy-']), amt, time])
                 view = UpdateMid()
-                window['-cur-'].update(view)
                 window['-cre-'].update(visible=True)
                 window['-crn-'].update(visible=True)
                 window['-htk-'].update(visible=True)
                 window['-hts-'].update(visible=True)
-            else:
-                messagebox.showerror('Warning', 'Please select a character and try again')
-        elif values['-amm-'] == 'Multiple':
-            if values['-akmi-'] != '':
-                cr.append([2, values['-akmi-']])
-                view = UpdateMid()
                 window['-cur-'].update(view)
-                window['-cre-'].update(visible=True)
-                window['-crn-'].update(visible=True)
-                window['-htk-'].update(visible=True)
-                window['-hts-'].update(visible=True)
             else:
-                messagebox.showerror('Warning', 'Please enter a text and try again')
-    elif event == "-cre-":
-        if values['-crn-'] != '':
-            macros.append([values['-crn-'], htky, cr])
-            keyboard.add_hotkey(htky, lambda x = len(macros) - 1: Run(macros[x]))
-            cr = []
-            view = "Nothing here yet"
-            window['-crn-'].update('')
+                messagebox.showerror('Warning', 'Please add values and retry')
+        case '-ak-':
+            Reset()
+            if values['-amm-'] == 'Single':
+                if sel != 'Nothing selected' and sel != '':
+                    cr.append([2, [sel]])
+                    view = UpdateMid()
+                    window['-cur-'].update(view)
+                    window['-cre-'].update(visible=True)
+                    window['-crn-'].update(visible=True)
+                    window['-htk-'].update(visible=True)
+                    window['-hts-'].update(visible=True)
+                else:
+                    messagebox.showerror('Warning', 'Please select a character and try again')
+            elif values['-amm-'] == 'Multiple':
+                if values['-akmi-'] != '':
+                    cr.append([2, values['-akmi-']])
+                    view = UpdateMid()
+                    window['-cur-'].update(view)
+                    window['-cre-'].update(visible=True)
+                    window['-crn-'].update(visible=True)
+                    window['-htk-'].update(visible=True)
+                    window['-hts-'].update(visible=True)
+                else:
+                    messagebox.showerror('Warning', 'Please enter a text and try again')
+        case "-cre-":
+            if values['-crn-'] != '':
+                macros.append([values['-crn-'], htky, cr])
+                keyboard.add_hotkey(htky, lambda x = len(macros) - 1: Run(macros[x]))
+                cr = []
+                view = "Nothing here yet"
+                window['-crn-'].update('')
+                window['-mac-'].update(values=macros)
+                window['-cre-'].update(visible=False)
+                window['-crn-'].update(visible=False)
+                window['-htk-'].update(visible=False)
+                window['-hts-'].update(visible=False)
+                window['-cur-'].update(view)
+                window['-left-'].update(visible=False)
+                window['-mid-'].update(visible=False)
+            else:
+                messagebox.showinfo('Provide a name', 'Please provide a name to the Macro')
+        case '-cho-':
+            sel = charSelector()
+            window['-cho-'].update(sel)
+        case '-del-':
+            sel_mac = [macros[row] for row in values['-mac-']]
+            try:
+                macros.remove(sel_mac[0])
+                keyboard.remove_hotkey(sel_mac[0][3])
+            except:
+                messagebox.showinfo('Warning', 'Select an entry to delete')
             window['-mac-'].update(values=macros)
-            window['-cre-'].update(visible=False)
-            window['-crn-'].update(visible=False)
-            window['-htk-'].update(visible=False)
-            window['-hts-'].update(visible=False)
-            window['-cur-'].update(view)
-            window['-left-'].update(visible=False)
-            window['-mid-'].update(visible=False)
-        else:
-            messagebox.showinfo('Provide a name', 'Please provide a name to the Macro')
-    elif event == '-cho-':
-        sel = charSelector()
-        window['-cho-'].update(sel)
-    elif event == '-del-':
-        sel_mac = [macros[row] for row in values['-mac-']]
-        try:
-            macros.remove(sel_mac[0])
-            keyboard.remove_hotkey(sel_mac[0][3])
-        except:
-            messagebox.showinfo('Warning', 'Select an entry to delete')
-        window['-mac-'].update(values=macros)
-    elif event == '-run-':
-        sel_mac = [macros[row] for row in values['-mac-']]
-        try:
-            Run(sel_mac[0])
-        except:
-            messagebox.showinfo('Warning', 'Select an entry to run')
-    elif event == '-htk-':
-        htky = ''
-        htky = get_Hotkey()
-        window['-hts-'].update(htky)
-    elif event == '-lod-':
-        loading = askopenfilename(filetypes=[("Macro files", "*.macros")])
-        if loading != '':
-            if macros != []:
-                keyboard.remove_all_hotkeys()
-            macros = load(loading, macros)
-            load_hotkeys()
-        window['-mac-'].update(values=macros)
-    elif event == '-sve-':
-        save(macros)
+        case '-run-':
+            sel_mac = [macros[row] for row in values['-mac-']]
+            try:
+                Run(sel_mac[0])
+            except:
+                messagebox.showinfo('Warning', 'Select an entry to run')
+        case '-htk-':
+            htky = ''
+            htky = get_Hotkey()
+            window['-hts-'].update(htky)
+        case '-lod-':
+            loading = askopenfilename(filetypes=[("Macro files", "*.macros")])
+            if loading != '':
+                if macros != []:
+                    keyboard.remove_all_hotkeys()
+                macros = load(loading, macros)
+                load_hotkeys()
+            window['-mac-'].update(values=macros)
+        case '-sve-':
+            save(macros)
 
 window.close()
