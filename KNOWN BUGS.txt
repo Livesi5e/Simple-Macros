@@ -7,7 +7,6 @@ Todo list:
 TODO Add keys to the single key window
 TODO Add a cancel button to the create macro page
 TODO Add a remove button to the current macro page
-TODO Chage if-elif-Statement to match-case in main.py
 TODO Add a rebind hotkey button
 
 Fixed stuff:
@@ -15,3 +14,4 @@ Fixed stuff:
 [x] Simplify the saved file to save space
 [x] Cant re-record Hotkeys while creating new Hotkey. Hotkey will break.
 [x] Hotkeys with a control key in it only work once.
+[x] Chage if-elif-Statement to match-case in main.py
