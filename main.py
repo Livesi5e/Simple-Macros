@@ -10,13 +10,14 @@ from tkinter.filedialog import askopenfilename
 import keyboard
 from scripts.charSelect import charSelector
 from scripts.DataManagement import load, save
-from scripts.Conversion import convert
+from scripts.Conversion import convert, UpdateMid
 
 # Inital variables
 
 list = ("Mouse Movement", "Mouse Click", "Keyboard Input")
 mb = ("Left", "Middle", "Right")
 amm = ("Single", "Multiple")
+curhead=("ID", "     Type     ", "   X   ", "   Y   ", "   Key   ", "Clicks", "Time")
 cr = []
 htky = ''
 hotkeys = []
@@ -128,12 +129,22 @@ new_macro = [
 
 current_macro = [
     [sg.T("Current Macro: ", font=font)],
-    [sg.T(view, key='-cur-')],
+    [sg.Table(
+        values=UpdateMid(cr),
+        headings=curhead,
+        num_rows=10,
+        alternating_row_color='green',
+        key='-cur-',
+        enable_events=True,
+        justification='center',
+        visible=False,
+        )],
     [
         sg.InputText(key="-crn-", size=(10, 20), visible=False),
         sg.Button(button_text='Hotkey', key='-htk-', visible=False),
         sg.T(htky, visible=False, key='-hts-'),
-        sg.Submit(button_text="Create", key='-cre-', visible=False)
+        sg.Submit(button_text="Create", key='-cre-', visible=False),
+        sg.Button(button_text='Delete', key='-cdl-', visible=False),
     ]
 ]
 
@@ -169,28 +180,6 @@ window = sg.Window("Simple Macros", layout)
 # ------ Functions ------
 
 # Updates the current macro page
-def UpdateMid():
-    old = ''
-    for x in cr:
-        temp = old
-        if x[0] == 0:
-            old = temp + 'Mouse Movement to\n' + 'x: ' + str(x[1]) + ' ' + 'y: ' + str(x[2]) + '\n\n'
-        elif x[0] == 1:
-            key = ''
-            match x[1]:
-                case 3:
-                    key = 'LMB'
-                case 4:
-                    key = 'RMB'
-                case 5:
-                    key = 'MMB'
-            old = temp + 'Mouse Button Click at\n' + 'x: ' + str(x[2]) + ' ' + 'y: ' + str(x[3]) + '\nKey: ' + key + '\nAmmount of Clicks: ' + str(x[4]) + '\nTime between clicks: ' + str(x[5]) + '\n\n'
-        elif x[0] == 2:
-            try:
-                old = temp + 'Keyboard Input:\n' + x[1] + '\n\n'
-            except:
-                old = temp + 'Keyboard Input:\n' + x[1][0] + '\n\n'
-    return old
 
 # Resets all inputs
 def Reset():
@@ -329,12 +318,13 @@ while True:
             if values['-mmx-'] != '' and values['-mmy-'] != '':
                 cr.append([0, int(values['-mmx-']), int(values['-mmy-'])])
                 Reset()
-                view = UpdateMid()
-                window['-cur-'].update(view)
+                window['-cur-'].update(visible=True)
+                window['-cur-'].update(values=UpdateMid(cr))
                 window['-cre-'].update(visible=True)
                 window['-crn-'].update(visible=True)
                 window['-htk-'].update(visible=True)
                 window['-hts-'].update(visible=True)
+                window['-cdl-'].update(visible=True)
             else:
                 messagebox.showerror('Warning', 'Please add values and retry')
         case "-ac-":
@@ -358,12 +348,13 @@ while True:
                 else:
                     time = float(values['-mct-'])
                 cr.append([1, button, int(values['-mcx-']), int(values['-mcy-']), amt, time])
-                view = UpdateMid()
                 window['-cre-'].update(visible=True)
+                window['-cur-'].update(values=UpdateMid(cr))
                 window['-crn-'].update(visible=True)
                 window['-htk-'].update(visible=True)
                 window['-hts-'].update(visible=True)
-                window['-cur-'].update(view)
+                window['-cur-'].update(visible=True)
+                window['-cdl-'].update(visible=True)
             else:
                 messagebox.showerror('Warning', 'Please add values and retry')
         case '-ak-':
@@ -371,23 +362,25 @@ while True:
             if values['-amm-'] == 'Single':
                 if sel != 'Nothing selected' and sel != '':
                     cr.append([2, [sel]])
-                    view = UpdateMid()
-                    window['-cur-'].update(view)
+                    window['-cur-'].update(visible=True)
+                    window['-cur-'].update(values=UpdateMid(cr))
                     window['-cre-'].update(visible=True)
                     window['-crn-'].update(visible=True)
                     window['-htk-'].update(visible=True)
                     window['-hts-'].update(visible=True)
+                    window['-cdl-'].update(visible=True)
                 else:
                     messagebox.showerror('Warning', 'Please select a character and try again')
             elif values['-amm-'] == 'Multiple':
                 if values['-akmi-'] != '':
                     cr.append([2, values['-akmi-']])
-                    view = UpdateMid()
-                    window['-cur-'].update(view)
+                    window['-cur-'].update(visible=True)
+                    window['-cur-'].update(values=UpdateMid(cr))
                     window['-cre-'].update(visible=True)
                     window['-crn-'].update(visible=True)
                     window['-htk-'].update(visible=True)
                     window['-hts-'].update(visible=True)
+                    window['-cdl-'].update(visible=True)
                 else:
                     messagebox.showerror('Warning', 'Please enter a text and try again')
         case "-cre-":
@@ -398,11 +391,13 @@ while True:
                 view = "Nothing here yet"
                 window['-crn-'].update('')
                 window['-mac-'].update(values=macros)
+                window['-cdl-'].update(visible=False)
                 window['-cre-'].update(visible=False)
                 window['-crn-'].update(visible=False)
                 window['-htk-'].update(visible=False)
                 window['-hts-'].update(visible=False)
-                window['-cur-'].update(view)
+                window['-cur-'].update(visible=False)
+                window['-cur-'].update(values=UpdateMid(cr))
                 window['-left-'].update(visible=False)
                 window['-mid-'].update(visible=False)
             else:
@@ -440,5 +435,7 @@ while True:
             window['-mac-'].update(values=macros)
         case '-sve-':
             save(macros)
-
+        case '-cdl-':
+            cr.remove(cr[values['-cur-'][0]])
+            window['-cur-'].update(values=UpdateMid(cr))
 window.close()

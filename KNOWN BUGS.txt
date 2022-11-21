@@ -1,6 +1,7 @@
 Bug list:
 
 BUG Seperator arent disabled while not being in new hotkey
+BUG On deleting in current macro, the first entry which matches will be removed, not the selected one
 
 Todo list:
 
@@ -15,4 +16,4 @@ Fixed stuff:
 [x] Simplify the saved file to save space
 [x] Cant re-record Hotkeys while creating new Hotkey. Hotkey will break.
 [x] Hotkeys with a control key in it only work once.
-[x] Chage if-elif-Statement to match-case in main.py
+[x] Change if-elif-Statement to match-case in main.py
