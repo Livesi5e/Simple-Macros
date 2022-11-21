@@ -241,7 +241,11 @@ def load(save, cur):
     return cur
 
 def saveStart(inp, bool):
-    with open('save.macros', mode='wb') as f:
+    path = os.path.expanduser('~\AppData\Roaming\SimpleMacro')
+    if os.path.isdir(path) != True:
+        os.mkdir(path)
+    path = os.path.join(path, 'save.macros')
+    with open(path, mode='wb') as f:
         final = []
         if bool == True:
             final.append(10)
@@ -293,10 +297,16 @@ def saveStart(inp, bool):
         f.write(bytes(final))
 
 
+
 def loadStart():
     final = []
     try:
-        with open('save.macros', mode='rb') as f:
+        path = os.path.expanduser('~\AppData\Roaming\SimpleMacro')
+        print(path)
+        if os.path.isdir(path) != True:
+            os.mkdir(path)
+        path = os.path.join(path, 'save.macros')
+        with open(path, mode='rb') as f:
             cur = []
             state = 2
             num = 0

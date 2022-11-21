@@ -1,1 +1,1 @@
-	
+	buildstrg+i680117011.5pyinstaller --onefile --noconsole main.py

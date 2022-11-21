@@ -263,7 +263,8 @@ while True:
     event, values = window.read()
     match event:
         case sg.WIN_CLOSED:
-            enableStartup.setReg()
+            if startup:
+                enableStartup.setReg()
             saveStart(macros, startup)
             break
         case "-new-":
