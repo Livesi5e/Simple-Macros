@@ -364,7 +364,7 @@ def loadStart():
                                 curr += chr(x)
         final.append(convToInt(cur))
     except:
-        return [True, []]
+        return [False, []]
     return final
 
 # ------ Test code ------
