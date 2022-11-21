@@ -1,4 +1,1 @@
-scripts/__pycache__/charSelect.cpython-311.pyc
-scripts/__pycache__/huffmantree.cpython-311.pyc
-scripts/__pycache__/DataManagement.cpython-311.pyc
-scripts/__pycache__/Conversion.cpython-311.pyc
+*.pyc
