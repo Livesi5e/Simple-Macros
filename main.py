@@ -8,6 +8,7 @@ import tkinter
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import keyboard
+import enableStartup
 from scripts.charSelect import charSelector
 from scripts.DataManagement import load, save, saveStart, loadStart
 from scripts.Conversion import convert, UpdateMid
@@ -262,6 +263,7 @@ while True:
     event, values = window.read()
     match event:
         case sg.WIN_CLOSED:
+            enableStartup.setReg()
             saveStart(macros, startup)
             break
         case "-new-":

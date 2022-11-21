@@ -16,3 +16,14 @@ build/main/xref-main.html
 dist/main.exe
 *.exe
 dist/save.macros
+enableStartup.spec
+build/enableStartup/Analysis-00.toc
+build/enableStartup/base_library.zip
+build/enableStartup/enableStartup.exe.manifest
+build/enableStartup/enableStartup.pkg
+build/enableStartup/EXE-00.toc
+build/enableStartup/PKG-00.toc
+build/enableStartup/PYZ-00.pyz
+build/enableStartup/PYZ-00.toc
+build/enableStartup/warn-enableStartup.txt
+build/enableStartup/xref-enableStartup.html
