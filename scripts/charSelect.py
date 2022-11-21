@@ -4,8 +4,6 @@
 import PySimpleGUI as sg
 import pyautogui as pag
 
-print(pag.KEYBOARD_KEYS)
-
 # ------ Importable Functions ------
 
 def charSelector():
@@ -534,7 +532,7 @@ def charSelector():
                 chosen = 'tab'
                 window['-sho-'].update(chosen)
 
-    # ------ Event Loop ------
+    # ------ After Eventloop ------
     #   Window will be closed, value will be returned and script ends
 
     window.close()
@@ -545,4 +543,5 @@ def charSelector():
 
 # ------ Test code ------
 
-test = charSelector()
+if __name__ == '__main__':
+    charSelector()

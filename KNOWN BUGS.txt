@@ -1,16 +1,19 @@
 Bug list:
 
-BUG While pressing Hotkeys, random Inputs will be filled in and wont be resettet
-BUG Cant re-record Hotkeys while creating new Hotkey. Hotkey will break.
 BUG Seperator arent disabled while not being in new hotkey
-BUG Hotkeys with a control key in it only work once.
+BUG On deleting in current macro, the first entry which matches will be removed, not the selected one
 
 Todo list:
 
 TODO Add keys to the single key window
-TODO Add a remove button to the create macro page
+TODO Add a cancel button to the create macro page
+TODO Add a remove button to the current macro page
 TODO Add a rebind hotkey button
+TODO Deactivate Macros
 
 Fixed stuff:
 
 [x] Simplify the saved file to save space
+[x] Cant re-record Hotkeys while creating new Hotkey. Hotkey will break.
+[x] Hotkeys with a control key in it only work once.
+[x] Change if-elif-Statement to match-case in main.py
