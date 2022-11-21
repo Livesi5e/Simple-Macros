@@ -1,5 +1,5 @@
 import json
-import keyboard
+import os
 import PySimpleGUI as sg
 from tkinter.filedialog import asksaveasfile
 
@@ -239,6 +239,123 @@ def load(save, cur):
 
     window.close()
     return cur
+
+def saveStart(inp, bool):
+    with open('save.macros', mode='wb') as f:
+        final = []
+        if bool == True:
+            final.append(10)
+        elif bool == False:
+            final.append(9)
+        for x in inp:
+            final.append(6)
+            for y in x[0]:
+                final.append(ord(y))
+            final.append(6)
+            for y in x[1]:
+                final.append(ord(y))
+            final.append(6)
+            for y in x[2]:
+                final.append(8)
+                if y[0] == 0:
+                    final.append(0)
+                    for z in str(y[1]):
+                        final.append(ord(str(z)))
+                    final.append(7)
+                    for z in str(y[2]):
+                        final.append(ord(str(z)))
+                    final.append(7)
+                elif y[0] == 1:
+                    final.append(1)
+                    if y[1] == 3:
+                        final.append(3)
+                    elif y[1] == 4:
+                        final.append(4)
+                    else:
+                        final.append(5)
+                    for z in str(y[2]):
+                        final.append(ord(z))
+                    final.append(7)
+                    for z in str(y[3]):
+                        final.append(ord(z))
+                    final.append(7)
+                    for z in str(y[4]):
+                        final.append(ord(z))
+                    final.append(7)
+                    for z in str(y[5]):
+                        final.append(ord(z))
+                    final.append(7)
+                elif y[0] == 2:
+                    final.append(2)
+                    for z in y[1]:
+                        final.append(ord(z))
+                    final.append(7)
+        f.write(bytes(final))
+
+
+def loadStart():
+    final = []
+    try:
+        with open('save.macros', mode='rb') as f:
+            cur = []
+            state = 2
+            num = 0
+            arr = 0
+            curr = ''
+            for x in f.read():
+                if x == 6 and state == 2:
+                    state = 0
+                    arr = 0
+                    cur.append([])
+                    num = len(cur) - 1
+                elif x == 6 and state == 1:
+                    state += 1
+                    cur[num].append([])
+                elif x == 6:
+                    state += 1
+                elif x == 10:
+                    final.append(False)
+                elif x == 9:
+                    final.append(True)
+                else:
+                    if state == 0:
+                        try:
+                            cur[num][0] += chr(x)
+                        except:
+                            cur[num].append(chr(x))
+                    elif state == 1:
+                        try:
+                            cur[num][1] += chr(x)
+                        except:
+                            cur[num].append(chr(x))
+                    elif state == 2:
+                        if x == 8:
+                            cur[num][2].append([])
+                            arr = len(cur[num][2]) - 1
+                        elif x == 7:
+                            cur[num][2][arr].append(curr)
+                            curr = ''
+                        else:
+                            if x == 0 or x == 1 or x == 2 or x == 3 or x == 4 or x == 5:
+                                if x == 0:
+                                    i = 0
+                                elif x == 1:
+                                    i = 1
+                                elif x == 2:
+                                    i = 2
+                                elif x == 3:
+                                    i = 3
+                                elif x == 4:
+                                    i = 4
+                                elif x == 5:
+                                    i = 5
+                                cur[num][2][arr].append(i)
+                            else:
+                                curr += chr(x)
+        final.append(convToInt(cur))
+    except:
+        return [True, []]
+    return final
 
 # ------ Test code ------
 

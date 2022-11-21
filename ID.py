@@ -14,3 +14,6 @@
 # 6 - Seperator of degree 1
 # 7 - Seperator of degree 2
 # 8 - Seperator of degree 3
+# 
+# 9 - No Autostart
+# 10 - Autostart

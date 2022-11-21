@@ -4,16 +4,20 @@
 
 import PySimpleGUI as sg
 import pyautogui as pag
+import winreg as reg
+import os
 import tkinter
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import keyboard
 from scripts.charSelect import charSelector
-from scripts.DataManagement import load, save
+from scripts.DataManagement import load, save, saveStart, loadStart
 from scripts.Conversion import convert, UpdateMid
+from scripts.macros import Run, load_hotkeys
 
 # Inital variables
 
+startup = True
 list = ("Mouse Movement", "Mouse Click", "Keyboard Input")
 mb = ("Left", "Middle", "Right")
 amm = ("Single", "Multiple")
@@ -29,6 +33,24 @@ font = ("Arial", 12)
 visible = False
 multiple = False
 single = True
+
+# ------ Startup ------
+
+loaded = loadStart()
+startup = loaded[0]
+macros = loaded[1]
+load_hotkeys(macros)
+
+if startup:
+    pth = os.getcwd()
+    name = 'main.exe'
+    adress = os.path.join(pth, name)
+    key_value = "Software\Microsoft\Windows\CurrentVersion\Run"
+    open = reg.OpenKey(reg.HKEY_CURRENT_USER, key_value, 0, reg.KEY_ALL_ACCESS)
+    reg.SetValueEx(open,"SimpleMacros",0,reg.REG_SZ, adress)
+    reg.CloseKey(open)
+    startup = False
+    saveStart(macros, startup)
 
 # All window components
 
@@ -204,25 +226,6 @@ def toggle(change):
         change = True
     return change
 
-# Executes a macro based on the array input
-def Run(mac):
-    for x in mac[2]:
-        match x[0]:
-            case 0:
-                pag.moveTo(x[1], x[2], 0.5)
-            case 1:
-                if x[1] == 3:
-                    button = 'left'
-                elif x[1] == 4:
-                    button = 'right'
-                elif x[1] == 5:
-                    button = 'middle'
-                pag.click(x=x[2], y=x[3], clicks=x[4], interval=x[5],button=button)
-            case 2:
-                pag.typewrite(x[1])
-            case _:
-                print('NaN')
-
 # Records a hotkey and returns it
 def get_Hotkey():
     layout = [[sg.T('Currently listening for Hotkey...')],[sg.Button('Finished', key='-fin-')]]
@@ -253,12 +256,6 @@ def get_Hotkey():
     window.close()
     return hotkey
 
-# adds all hotkeys from current macros
-def load_hotkeys():
-    i = 0
-    for x in macros:
-        keyboard.add_hotkey(x[1], lambda x = i: Run(macros[x]))
-
 # Toggles the inputfields
 def ToggleInp(x):
     for x in Inputs:
@@ -278,6 +275,7 @@ while True:
     event, values = window.read()
     match event:
         case sg.WIN_CLOSED:
+            saveStart(macros, startup)
             break
         case "-new-":
             window['-left-'].update(visible=True)
@@ -431,7 +429,7 @@ while True:
                 if macros != []:
                     keyboard.remove_all_hotkeys()
                 macros = load(loading, macros)
-                load_hotkeys()
+                load_hotkeys(macros)
             window['-mac-'].update(values=macros)
         case '-sve-':
             save(macros)

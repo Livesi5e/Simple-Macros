@@ -2,6 +2,7 @@ Bug list:
 
 BUG Seperator arent disabled while not being in new hotkey
 BUG On deleting in current macro, the first entry which matches will be removed, not the selected one
+BUG Hotkeys arent removed after deleting the entry
 
 Todo list:
 
@@ -10,6 +11,7 @@ TODO Add a cancel button to the create macro page
 TODO Add a remove button to the current macro page
 TODO Add a rebind hotkey button
 TODO Deactivate Macros
+TODO Add startup functionality
 
 Fixed stuff:
 

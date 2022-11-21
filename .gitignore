@@ -15,3 +15,4 @@ build/main/warn-main.txt
 build/main/xref-main.html
 dist/main.exe
 *.exe
+dist/save.macros
