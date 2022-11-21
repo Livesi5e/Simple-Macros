@@ -4,8 +4,6 @@
 
 import PySimpleGUI as sg
 import pyautogui as pag
-import winreg as reg
-import os
 import tkinter
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
@@ -40,17 +38,6 @@ loaded = loadStart()
 startup = loaded[0]
 macros = loaded[1]
 load_hotkeys(macros)
-
-if startup:
-    pth = os.getcwd()
-    name = 'main.exe'
-    adress = os.path.join(pth, name)
-    key_value = "Software\Microsoft\Windows\CurrentVersion\Run"
-    open = reg.OpenKey(reg.HKEY_CURRENT_USER, key_value, 0, reg.KEY_ALL_ACCESS)
-    reg.SetValueEx(open,"SimpleMacros",0,reg.REG_SZ, adress)
-    reg.CloseKey(open)
-    startup = False
-    saveStart(macros, startup)
 
 # All window components
 
