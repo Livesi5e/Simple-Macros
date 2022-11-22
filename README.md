@@ -35,4 +35,4 @@ We can now enter a name and hit create to finish making the macro. If you want t
 
 ![Create](https://user-images.githubusercontent.com/109060918/203257130-e8d69c6d-956c-4d88-8077-5498a4708069.png)
 
-Now you have a new entry in your macro list and can use it globally. If you've found bugs or have some ideas you can use the GitHub [Bugreports](example.org) to submit them.
+Now you have a new entry in your macro list and can use it globally. If you've found bugs or have some ideas you can use the GitHub [Bugreports](https://github.com/Livesi5e/Simple-Macros/issues) to submit them.
