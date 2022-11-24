@@ -2,7 +2,6 @@
 # surrounding character selection
 
 import PySimpleGUI as sg
-import pyautogui as pag
 
 # ------ Importable Functions ------
 

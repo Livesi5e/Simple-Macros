@@ -11,12 +11,11 @@ def convert(x):
 
 def UpdateMid(x):
     text = []
-    i = 0
     for y in x:
         text.append([])
         match y[0]:
             case 0:
-                text[len(text)-1].append([i, '.'])
+                text[len(text)-1].append([y[3], '.'])
                 text[len(text)-1].append('Mouse Movement')
                 text[len(text)-1].append(str(y[1]))
                 text[len(text)-1].append(str(y[2]))
@@ -24,7 +23,7 @@ def UpdateMid(x):
                 text[len(text)-1].append('')
                 text[len(text)-1].append('')
             case 1:
-                text[len(text)-1].append([i, '.'])
+                text[len(text)-1].append([y[6], '.'])
                 text[len(text)-1].append('Mouse Click')
                 text[len(text)-1].append(str(y[2]))
                 text[len(text)-1].append(str(y[3]))
@@ -38,13 +37,12 @@ def UpdateMid(x):
                 text[len(text)-1].append(str(y[4]))
                 text[len(text)-1].append(str(y[5]))
             case 2:
-                text[len(text)-1].append([i, '.'])
+                text[len(text)-1].append([y[2], '.'])
                 text[len(text)-1].append('Keyboard Input')
                 text[len(text)-1].append('')
                 text[len(text)-1].append('')
                 text[len(text)-1].append(y[1])
                 text[len(text)-1].append('')
                 text[len(text)-1].append('')
-        i += 1
 
     return text

@@ -3,7 +3,6 @@
 # Does not support macro recording
 
 import PySimpleGUI as sg
-import pyautogui as pag
 import tkinter
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
@@ -155,6 +154,7 @@ current_macro = [
         sg.T(htky, visible=False, key='-hts-'),
         sg.Submit(button_text="Create", key='-cre-', visible=False),
         sg.Button(button_text='Delete', key='-cdl-', visible=False),
+        sg.Button(button_text='Cancel', key='-can-', visible=False),
     ]
 ]
 
@@ -304,7 +304,7 @@ while True:
                 window["-akm-"].update(visible=multiple)
         case "-am-":
             if values['-mmx-'] != '' and values['-mmy-'] != '':
-                cr.append([0, int(values['-mmx-']), int(values['-mmy-'])])
+                cr.append([0, int(values['-mmx-']), int(values['-mmy-']), len(cr)])
                 Reset()
                 window['-cur-'].update(visible=True)
                 window['-cur-'].update(values=UpdateMid(cr))
@@ -313,6 +313,7 @@ while True:
                 window['-htk-'].update(visible=True)
                 window['-hts-'].update(visible=True)
                 window['-cdl-'].update(visible=True)
+                window['-can-'].update(visible=True)
             else:
                 messagebox.showerror('Warning', 'Please add values and retry')
         case "-ac-":
@@ -335,7 +336,7 @@ while True:
                     time = 0.2
                 else:
                     time = float(values['-mct-'])
-                cr.append([1, button, int(values['-mcx-']), int(values['-mcy-']), amt, time])
+                cr.append([1, button, int(values['-mcx-']), int(values['-mcy-']), amt, time, len(cr)])
                 window['-cre-'].update(visible=True)
                 window['-cur-'].update(values=UpdateMid(cr))
                 window['-crn-'].update(visible=True)
@@ -343,13 +344,14 @@ while True:
                 window['-hts-'].update(visible=True)
                 window['-cur-'].update(visible=True)
                 window['-cdl-'].update(visible=True)
+                window['-can-'].update(visible=True)
             else:
                 messagebox.showerror('Warning', 'Please add values and retry')
         case '-ak-':
             Reset()
             if values['-amm-'] == 'Single':
                 if sel != 'Nothing selected' and sel != '':
-                    cr.append([2, [sel]])
+                    cr.append([2, [sel], len(cr)])
                     window['-cur-'].update(visible=True)
                     window['-cur-'].update(values=UpdateMid(cr))
                     window['-cre-'].update(visible=True)
@@ -357,11 +359,12 @@ while True:
                     window['-htk-'].update(visible=True)
                     window['-hts-'].update(visible=True)
                     window['-cdl-'].update(visible=True)
+                    window['-can-'].update(visible=True)
                 else:
                     messagebox.showerror('Warning', 'Please select a character and try again')
             elif values['-amm-'] == 'Multiple':
                 if values['-akmi-'] != '':
-                    cr.append([2, values['-akmi-']])
+                    cr.append([2, values['-akmi-'], len(cr)])
                     window['-cur-'].update(visible=True)
                     window['-cur-'].update(values=UpdateMid(cr))
                     window['-cre-'].update(visible=True)
@@ -369,6 +372,7 @@ while True:
                     window['-htk-'].update(visible=True)
                     window['-hts-'].update(visible=True)
                     window['-cdl-'].update(visible=True)
+                    window['-can-'].update(visible=True)
                 else:
                     messagebox.showerror('Warning', 'Please enter a text and try again')
         case "-cre-":
@@ -388,6 +392,7 @@ while True:
                 window['-cur-'].update(values=UpdateMid(cr))
                 window['-left-'].update(visible=False)
                 window['-mid-'].update(visible=False)
+                window['-can-'].update(visible=False)
             else:
                 messagebox.showinfo('Provide a name', 'Please provide a name to the Macro')
         case '-cho-':
@@ -426,4 +431,21 @@ while True:
         case '-cdl-':
             cr.remove(cr[values['-cur-'][0]])
             window['-cur-'].update(values=UpdateMid(cr))
+        case '-can-':
+            cr = []
+            Reset()
+            ResetAdv()
+            window['-crn-'].update('')
+            window['-mac-'].update(values=macros)
+            window['-cdl-'].update(visible=False)
+            window['-cre-'].update(visible=False)
+            window['-crn-'].update(visible=False)
+            window['-htk-'].update(visible=False)
+            window['-hts-'].update(visible=False)
+            window['-cur-'].update(visible=False)
+            window['-cur-'].update(values=UpdateMid(cr))
+            window['-left-'].update(visible=False)
+            window['-mid-'].update(visible=False)
+            window['-can-'].update(visible=False)
+
 window.close()

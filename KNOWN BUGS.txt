@@ -1,17 +1,13 @@
 Bug list:
 
 BUG Seperator arent disabled while not being in new hotkey
-BUG On deleting in current macro, the first entry which matches will be removed, not the selected one
 BUG Hotkeys arent removed after deleting the entry
 
 Todo list:
 
 TODO Add keys to the single key window
-TODO Add a cancel button to the create macro page
-TODO Add a remove button to the current macro page
 TODO Add a rebind hotkey button
 TODO Deactivate Macros
-TODO Add startup functionality
 
 Fixed stuff:
 
@@ -19,3 +15,6 @@ Fixed stuff:
 [x] Cant re-record Hotkeys while creating new Hotkey. Hotkey will break.
 [x] Hotkeys with a control key in it only work once.
 [x] Change if-elif-Statement to match-case in main.py
+[x] Add a cancel button to the create macro page
+[x] Add startup functionality
+[x] On deleting in current macro, the first entry which matches will be removed, not the selected one
