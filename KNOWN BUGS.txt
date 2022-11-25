@@ -8,6 +8,7 @@ Todo list:
 TODO Add keys to the single key window
 TODO Add a rebind hotkey button
 TODO Deactivate Macros
+TODO Macros execute of conitions
 
 Fixed stuff:
 
