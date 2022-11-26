@@ -5,6 +5,8 @@ from tkinter.filedialog import asksaveasfile
 
 def save(inp):
     f = asksaveasfile(mode='wb', defaultextension='.macros', filetypes=[("Macro Files", '*.macros')])
+    if f == None:
+        return
     final = []
     for x in inp:
         final.append(6)
@@ -240,17 +242,13 @@ def load(save, cur):
     window.close()
     return cur
 
-def saveStart(inp, bool):
+def saveStart(inp):
     path = os.path.expanduser('~\AppData\Roaming\SimpleMacro')
     if os.path.isdir(path) != True:
         os.mkdir(path)
     path = os.path.join(path, 'save.macros')
     with open(path, mode='wb') as f:
         final = []
-        if bool == True:
-            final.append(10)
-        elif bool == False:
-            final.append(9)
         for x in inp:
             final.append(6)
             for y in x[0]:
@@ -362,9 +360,9 @@ def loadStart():
                                 cur[num][2][arr].append(i)
                             else:
                                 curr += chr(x)
-        final.append(convToInt(cur))
+        final = convToInt(cur)
     except:
-        return [False, []]
+        return []
     return final
 
 # ------ Test code ------
