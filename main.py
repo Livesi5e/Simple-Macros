@@ -7,7 +7,6 @@ import tkinter
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import keyboard
-import enableStartup
 from scripts.charSelect import charSelector
 from scripts.DataManagement import load, save, saveStart, loadStart
 from scripts.Conversion import convert, UpdateMid

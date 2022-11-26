@@ -300,7 +300,6 @@ def loadStart():
     final = []
     try:
         path = os.path.expanduser('~\AppData\Roaming\SimpleMacro')
-        print(path)
         if os.path.isdir(path) != True:
             os.mkdir(path)
         path = os.path.join(path, 'save.macros')
