@@ -28,4 +28,4 @@ def warn(title, message, **param):
                 window.close()
                 func()
 
-    window.close()
+    window.close() 

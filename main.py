@@ -13,15 +13,15 @@ from scripts.macros import Run, load_hotkeys
 from scripts.OptionMenu import Options
 from scripts.warning import warn
 
-# Inital variables
+# --- Inital variables ---
 
 list = ("Mouse Movement", "Mouse Click", "Keyboard Input")
 mb = ("Left", "Middle", "Right")
 amm = ("Single", "Multiple")
 curhead=("ID", "     Type     ", "   X   ", "   Y   ", "   Key   ", "Clicks", "Time")
-menu_list = ['File', ['Save', 'Load', 'New', '---', 'Options']],['Edit', ['Run', 'Delete']]
+menu_list = ['File', ['Save', 'Load', 'New', '---', 'Options', '---', 'Exit']],['Edit', ['Run', 'Delete']]
 cr = []
-hotkeys = []
+hotkeys = [] 
 macros = []
 htky = ''
 sel=''
@@ -478,5 +478,9 @@ while True:
             except:
                 warn('Attention!','Select an entry to delete', Okay=lambda : None)
             window['-mac-'].update(values=macros)
+        case 'Exit':
+            if prefs[1]:
+                saveStart(macros)
+            break
 
 window.close()
