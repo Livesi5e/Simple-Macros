@@ -7,20 +7,20 @@ import tkinter
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import keyboard
-import enableStartup
 from scripts.charSelect import charSelector
 from scripts.DataManagement import load, save, saveStart, loadStart
 from scripts.Conversion import convert, UpdateMid
 from scripts.macros import Run, load_hotkeys
+from scripts.OptionMenu import Options
 
 # Inital variables
 
-startup = True
 list = ("Mouse Movement", "Mouse Click", "Keyboard Input")
 mb = ("Left", "Middle", "Right")
 amm = ("Single", "Multiple")
 curhead=("ID", "     Type     ", "   X   ", "   Y   ", "   Key   ", "Clicks", "Time")
 cr = []
+menu_list = ['&File', ['&Save', '&Load', '---', '&Options']],
 htky = ''
 hotkeys = []
 macros = []
@@ -35,8 +35,7 @@ single = True
 # ------ Startup ------
 
 loaded = loadStart()
-startup = loaded[0]
-macros = loaded[1]
+macros = loaded
 load_hotkeys(macros)
 
 # All window components
@@ -158,6 +157,10 @@ current_macro = [
     ]
 ]
 
+options_button = [[sg.Button(button_text='O')]]
+
+options = [[]]
+
 your_macros = [
     [
         sg.Table(
@@ -176,20 +179,20 @@ your_macros = [
 # ------ Full layout ------
 
 layout = [
+    [sg.Menu(menu_list)],
     [
         sg.pin(sg.Column(new_macro, visible=False, key='-left-')),
         sg.VerticalSeparator(),
         sg.pin(sg.Column(current_macro, visible=False, key='-mid-')),
         sg.VerticalSeparator(),
-        sg.pin(sg.Column(your_macros, key="-ymc-"))
+        sg.pin(sg.Column(your_macros, key="-ymc-")),
+        sg.pin(sg.Column(options, visible=False, key='-opt-'))
     ]
 ]
 
 window = sg.Window("Simple Macros", layout)
 
 # ------ Functions ------
-
-# Updates the current macro page
 
 # Resets all inputs
 def Reset():
@@ -263,9 +266,7 @@ while True:
     event, values = window.read()
     match event:
         case sg.WIN_CLOSED:
-            if startup:
-                enableStartup.setReg()
-            saveStart(macros, startup)
+            saveStart(macros)
             break
         case "-new-":
             window['-left-'].update(visible=True)
@@ -447,5 +448,17 @@ while True:
             window['-left-'].update(visible=False)
             window['-mid-'].update(visible=False)
             window['-can-'].update(visible=False)
+        case 'Save':
+            save(macros)
+        case 'Load':
+            loading = askopenfilename(filetypes=[("Macro files", "*.macros")])
+            if loading != '':
+                if macros != []:
+                    keyboard.remove_all_hotkeys()
+                macros = load(loading, macros)
+                load_hotkeys(macros)
+            window['-mac-'].update(values=macros)
+        case 'Options':
+            Options()
 
 window.close()
