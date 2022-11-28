@@ -4,14 +4,14 @@
 
 import PySimpleGUI as sg
 import tkinter
-from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import keyboard
 from scripts.charSelect import charSelector
-from scripts.DataManagement import load, save, saveStart, loadStart
+from scripts.DataManagement import load, save, saveStart, loadStart, loadOptions
 from scripts.Conversion import convert, UpdateMid
 from scripts.macros import Run, load_hotkeys
 from scripts.OptionMenu import Options
+from scripts.warning import warn
 
 # Inital variables
 
@@ -19,11 +19,11 @@ list = ("Mouse Movement", "Mouse Click", "Keyboard Input")
 mb = ("Left", "Middle", "Right")
 amm = ("Single", "Multiple")
 curhead=("ID", "     Type     ", "   X   ", "   Y   ", "   Key   ", "Clicks", "Time")
+menu_list = ['File', ['Save', 'Load', 'New', '---', 'Options']],['Edit', ['Run', 'Delete']]
 cr = []
-menu_list = ['&File', ['&Save', '&Load', '---', '&Options']],
-htky = ''
 hotkeys = []
 macros = []
+htky = ''
 sel=''
 sel_mac = ''
 view = "Nothing here yet"
@@ -34,14 +34,13 @@ single = True
 
 # ------ Startup ------
 
-loaded = loadStart()
-macros = loaded
-load_hotkeys(macros)
+prefs = loadOptions()
+if prefs[1]:
+    loaded = loadStart()
+    macros = loaded
+    load_hotkeys(macros, True)
 
-# All window components
-
-root = tkinter.Tk()
-root.withdraw()
+# - All window components -
 
 one = [
     [
@@ -157,10 +156,6 @@ current_macro = [
     ]
 ]
 
-options_button = [[sg.Button(button_text='O')]]
-
-options = [[]]
-
 your_macros = [
     [
         sg.Table(
@@ -185,8 +180,7 @@ layout = [
         sg.VerticalSeparator(),
         sg.pin(sg.Column(current_macro, visible=False, key='-mid-')),
         sg.VerticalSeparator(),
-        sg.pin(sg.Column(your_macros, key="-ymc-")),
-        sg.pin(sg.Column(options, visible=False, key='-opt-'))
+        sg.pin(sg.Column(your_macros, key="-ymc-"))
     ]
 ]
 
@@ -252,6 +246,16 @@ def ToggleInp(x):
     for x in Inputs:
         x.update(disabled=x)
 
+def New():
+    global macros
+    if macros != []:
+        keyboard.remove_all_hotkeys()
+    macros = []
+
+def saveNew():
+    save(macros)
+    New()
+
 # ------ Event Loop ------
 #   Window will check for user inputs and 
 #   respond accordingly. Check for update
@@ -266,7 +270,8 @@ while True:
     event, values = window.read()
     match event:
         case sg.WIN_CLOSED:
-            saveStart(macros)
+            if prefs[1]:
+                saveStart(macros)
             break
         case "-new-":
             window['-left-'].update(visible=True)
@@ -316,7 +321,7 @@ while True:
                 window['-cdl-'].update(visible=True)
                 window['-can-'].update(visible=True)
             else:
-                messagebox.showerror('Warning', 'Please add values and retry')
+                warn('Warning', 'Please add values and retry', Okay=lambda : None)
         case "-ac-":
             if values['-mcx-'] != '' and values['-mcy-'] != '' and values['-mcb-'] != '':
                 Reset()
@@ -347,7 +352,7 @@ while True:
                 window['-cdl-'].update(visible=True)
                 window['-can-'].update(visible=True)
             else:
-                messagebox.showerror('Warning', 'Please add values and retry')
+                warn('Warning', 'Please add values and retry', Okay=lambda : None)
         case '-ak-':
             Reset()
             if values['-amm-'] == 'Single':
@@ -362,7 +367,7 @@ while True:
                     window['-cdl-'].update(visible=True)
                     window['-can-'].update(visible=True)
                 else:
-                    messagebox.showerror('Warning', 'Please select a character and try again')
+                    warn('Warning', 'Please select a character and try again', Okay=lambda : None)
             elif values['-amm-'] == 'Multiple':
                 if values['-akmi-'] != '':
                     cr.append([2, values['-akmi-'], len(cr)])
@@ -375,7 +380,7 @@ while True:
                     window['-cdl-'].update(visible=True)
                     window['-can-'].update(visible=True)
                 else:
-                    messagebox.showerror('Warning', 'Please enter a text and try again')
+                    warn('Warning', 'Please enter a text and try again', Okay=lambda : None)
         case "-cre-":
             if values['-crn-'] != '':
                 macros.append([values['-crn-'], htky, cr])
@@ -395,7 +400,7 @@ while True:
                 window['-mid-'].update(visible=False)
                 window['-can-'].update(visible=False)
             else:
-                messagebox.showinfo('Provide a name', 'Please provide a name to the Macro')
+                warn('Provide a name', 'Please provide a name to the Macro', Okay=lambda : None)
         case '-cho-':
             sel = charSelector()
             window['-cho-'].update(sel)
@@ -403,16 +408,16 @@ while True:
             sel_mac = [macros[row] for row in values['-mac-']]
             try:
                 macros.remove(sel_mac[0])
-                keyboard.remove_hotkey(sel_mac[0][3])
+                load_hotkeys(macros, False)
             except:
-                messagebox.showinfo('Warning', 'Select an entry to delete')
+                warn('Attention!','Select an entry to delete', Okay=lambda : None)
             window['-mac-'].update(values=macros)
         case '-run-':
             sel_mac = [macros[row] for row in values['-mac-']]
             try:
                 Run(sel_mac[0])
             except:
-                messagebox.showinfo('Warning', 'Select an entry to run')
+                warn('Attention!','Select an entry to run', Okay=lambda : None)
         case '-htk-':
             ToggleInp(False)
             htky = ''
@@ -422,10 +427,8 @@ while True:
         case '-lod-':
             loading = askopenfilename(filetypes=[("Macro files", "*.macros")])
             if loading != '':
-                if macros != []:
-                    keyboard.remove_all_hotkeys()
                 macros = load(loading, macros)
-                load_hotkeys(macros)
+                load_hotkeys(macros, False)
             window['-mac-'].update(values=macros)
         case '-sve-':
             save(macros)
@@ -453,12 +456,27 @@ while True:
         case 'Load':
             loading = askopenfilename(filetypes=[("Macro files", "*.macros")])
             if loading != '':
-                if macros != []:
-                    keyboard.remove_all_hotkeys()
                 macros = load(loading, macros)
-                load_hotkeys(macros)
+                load_hotkeys(macros, False)
             window['-mac-'].update(values=macros)
         case 'Options':
-            Options()
+            Options(loadOptions())
+        case 'New':
+            warn('Warning!','Attention! This will delete all your current macros.\nDo you want to save them before proceeding?', Yes=saveNew, No=New)
+            window['-mac-'].update(values=macros)
+        case 'Run':
+            sel_mac = [macros[row] for row in values['-mac-']]
+            try:
+                Run(sel_mac[0])
+            except:
+                warn('Attention!','Select an entry to run', Okay=lambda : None)
+        case 'Delete':
+            sel_mac = [macros[row] for row in values['-mac-']]
+            try:
+                macros.remove(sel_mac[0])
+                load_hotkeys(macros, False)
+            except:
+                warn('Attention!','Select an entry to delete', Okay=lambda : None)
+            window['-mac-'].update(values=macros)
 
 window.close()

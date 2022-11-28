@@ -1,13 +1,28 @@
 import PySimpleGUI as sg
 from enableStartup import enableReg, disableReg
+from scripts.DataManagement import saveOptions
 
-def Options():
-    
+def Options(state):
+    # ----- Variables -----
+
+    save = []
+
+    # ----- Load Save -----
+
+    if state[0] == 0:
+        save.append(False)
+    else:
+        save.append(True)
+    if state[1] == 0:
+        save.append(False)
+    else:
+        save.append(True)
+
     # All window components
 
     checks = [
-        [sg.Checkbox('', default=False, key='-ats-')],
-        [sg.Checkbox('', default=False, key='-atl-')]
+        [sg.Checkbox('', default=save[0], key='-ats-')],
+        [sg.Checkbox('', default=save[1], key='-atl-')]
     ]
 
     texts = [
@@ -23,7 +38,7 @@ def Options():
 
     layout = [
         [sg.pin(sg.Frame('',options))],
-        [sg.Button('Apply', key='-app-')]
+        [sg.Button('Apply', key='-app-'), sg.Button('Close', key='-cls-')]
     ]
 
     window = sg.Window('Options', layout)
@@ -35,9 +50,12 @@ def Options():
         match event:
             case sg.WIN_CLOSED:
                 break
+            case '-cls-':
+                break
         if values['-ats-'] == True:
             enableReg()
-        if values['-atl-'] == True:
-            print('true')
+        else:
+            disableReg()
+        saveOptions(values['-ats-'], values['-atl-'])
 
     window.close()

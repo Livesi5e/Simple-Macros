@@ -364,7 +364,25 @@ def loadStart():
         return []
     return final
 
-# ------ Test code ------
+def loadOptions():
+    try:
+        with open(os.path.expanduser('~\AppData\Roaming\SimpleMacro\options.pref'), mode='rb') as f:
+            end = []
+            for x in f.read():
+                end.append(x)
+        return end
+    except:
+        return [0,0]
 
-if __name__ == '__main__':
-    test = load()
+def saveOptions(b0, b1):
+    with open(os.path.expanduser('~\AppData\Roaming\SimpleMacro\options.pref'), mode='wb') as f:
+        final = []
+        if b0 == True:
+            final.append(1)
+        else:
+            final.append(0)
+        if b1 == True:
+            final.append(1)
+        else:
+            final.append(0)
+        f.write(bytes(final))

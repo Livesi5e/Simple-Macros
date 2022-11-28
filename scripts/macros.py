@@ -20,7 +20,9 @@ def Run(mac):
             case _:
                 print('NaN')
 
-def load_hotkeys(macros):
+def load_hotkeys(macros, startup):
     i = 0
+    if startup != True:
+        keyboard.remove_all_hotkeys()
     for x in macros:
         keyboard.add_hotkey(x[1], lambda x = i: Run(macros[x]))

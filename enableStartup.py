@@ -11,7 +11,5 @@ def enableReg():
     reg.CloseKey(open)
 
 def disableReg():
-    key_value = "Software\Microsoft\Windows\CurrentVersion\Run\SimpleMacros"
-    open = reg.OpenKey(reg.HKEY_CURRENT_USER, key_value, 0, reg.KEY_ALL_ACCESS)
-    reg.DeleteKey(open)
-    reg.CloseKey(open)
+    with reg.OpenKeyEx(reg.HKEY_CURRENT_USER, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Run', access=reg.KEY_ALL_ACCESS) as open:
+        reg.SetValueEx(open, 'SimpleMacros',0,reg.REG_SZ,'deactivated')
