@@ -13,26 +13,47 @@ from scripts.OptionMenu import Options
 from scripts.warning import warn
 
 # ---- Inital variables ----
+#
+#   |------------|----------------------------------------------------------|
+#   |menulist    |   It has all names and buttons for the NavBar at the top |
+#   |------------|----------------------------------------------------------|
+#   |cr          |   This list is the current list of operations for a new  |
+#   |            |   macro                                                  |
+#   |------------|----------------------------------------------------------|
+#   |macros      |   It holds all macros present in the list.               |
+#   |            |   One element of the list looks as follows:              |
+#   |            |   ['Name of the macro', 'Hotkey', [macro]]               |
+#   |            |                                      ⇑                   |
+#   |            |   [Type of input, Optional informations, User values]    |
+#   |------------|----------------------------------------------------------|
+#   |active      |   It holds the information if a certain macro is         |
+#   |            |   activated or not                                       |
+#   |------------|----------------------------------------------------------|
+#   |htky        |   It holds the hotkey for the current WIP macro          |
+#   |------------|----------------------------------------------------------|
+#   |sel         |   It has the selected key from charSelector              |
+#   |------------|----------------------------------------------------------|
+#   |visible     |   It stores if the advanced mouse click window is open   |
+#   |------------|----------------------------------------------------------|
+#   |multiple    |   They toggle the state in which the keyboard button is  |
+#   |single      |                                                          |
+#   |------------|----------------------------------------------------------|
 
-list = ("Mouse Movement", "Mouse Click", "Keyboard Input")
-mb = ("Left", "Middle", "Right")
-amm = ("Single", "Multiple")
-curhead=("ID", "     Type     ", "   X   ", "   Y   ", "   Key   ", "Clicks", "Time")
-menu_list = ['File', ['Save', 'Load', 'New', '---', 'Options', '---', 'Exit']],['Edit', ['Run', 'Delete']]
+menulist = ['File', ['Save', 'Load', 'New', '---', 'Options', '---', 'Exit']],['Edit', ['Run', 'Delete']]
 cr = []
-hotkeys = [] 
 macros = []
 active = []
 htky = ''
 sel=''
-sel_mac = ''
-view = "Nothing here yet"
-font = ("Arial", 12)
 visible = False
 multiple = False
 single = True
 
 # ------ Startup ------
+#
+#   Here the preferences from the user get loaded
+#   and dependent of the users prefs the auto startup
+#   will be loaded
 
 prefs = loadOptions()
 if prefs[1]:
@@ -41,11 +62,24 @@ if prefs[1]:
     load_hotkeys(macros, True, active)
 
 # - All window components -
+#
+#   Cross components are referenced in brackets
+#
+#   one         |   Components for a single key press
+#   ------------|---------------
+#   more        |   Components for multiple key presses
+#   ------------|---------------
+#   add_key     |   Components for adding a key press
+#               |   (one, more)
+#   ------------|---------------
+#   add_click   |   Components for advanced click menu
+#   _adv        |
+#   ------------|---------------
 
 one = [
     [
         sg.T("Choose a keypress: "),
-        sg.Button(button_text=sel, key='-cho-')
+        sg.Button(button_text='', key='-cho-')
     ]
 ]
 
@@ -60,7 +94,7 @@ add_key = [
     [sg.T('')],
     [
         sg.T("Ammount of Charakters: "),
-        sg.Combo(values=amm, size=(10, len(amm)), default_value="Single", key="-amm-", enable_events=True, readonly=True),
+        sg.Combo(values=('Single', 'Multiple'), size=(10, 2), default_value="Single", key="-amm-", enable_events=True, readonly=True),
     ],
     [
         sg.pin(sg.Column(one, visible=single, key='-aks-'))
@@ -88,7 +122,7 @@ add_click = [
     [sg.T('')],
     [
         sg.T("Mouse Button: "),
-        sg.Combo(values=mb, size=(10, len(mb)), default_value="-none-", key="-mcb-", enable_events=True, readonly=True)
+        sg.Combo(values=("Left", "Middle", "Right"), size=(10, 3), default_value="-none-", key="-mcb-", enable_events=True, readonly=True)
     ],
     [
         sg.T("X-Coordinate: "),
@@ -125,7 +159,7 @@ add_movement = [
 new_macro = [
     [
         sg.T("Input type: "),
-        sg.Combo(values=list, size=(15, len(list)), default_value="Pick Input Type", key="-cat-", enable_events=True, readonly=True),
+        sg.Combo(values=("Mouse Movement", "Mouse Click", "Keyboard Input"), size=(15, 3), default_value="Pick Input Type", key="-cat-", enable_events=True, readonly=True),
     ],
     [
         sg.pin(sg.Column(add_movement, key="-mousemove-", visible=False)),
@@ -135,10 +169,10 @@ new_macro = [
 ]
 
 current_macro = [
-    [sg.T("Current Macro: ", font=font)],
+    [sg.T("Current Macro: ", font=("Arial", 12))],
     [sg.Table(
         values=UpdateMid(cr),
-        headings=curhead,
+        headings=("ID", "     Type     ", "   X   ", "   Y   ", "   Key   ", "Clicks", "Time"),
         num_rows=10,
         alternating_row_color='green',
         key='-cur-',
@@ -149,7 +183,7 @@ current_macro = [
     [
         sg.InputText(key="-crn-", size=(10, 20), visible=False),
         sg.Button(button_text='Hotkey', key='-htk-', visible=False),
-        sg.T(htky, visible=False, key='-hts-'),
+        sg.T('', visible=False, key='-hts-'),
         sg.Submit(button_text="Create", key='-cre-', visible=False),
         sg.Button(button_text='Delete', key='-cdl-', visible=False),
         sg.Button(button_text='Cancel', key='-can-', visible=False),
@@ -174,7 +208,7 @@ your_macros = [
 # ------ Full layout ------
 
 layout = [
-    [sg.Menu(menu_list)],
+    [sg.Menu(menulist)],
     [
         sg.pin(sg.Column(new_macro, visible=False, key='-left-')),
         sg.VerticalSeparator(),
@@ -356,7 +390,7 @@ while True:
         case '-ak-':
             Reset()
             if values['-amm-'] == 'Single':
-                if sel != 'Nothing selected' and sel != '':
+                if sel != '':
                     cr.append([2, [sel], len(cr)])
                     window['-cur-'].update(visible=True)
                     window['-cur-'].update(values=UpdateMid(cr))
@@ -387,7 +421,6 @@ while True:
                 active.append(True)
                 keyboard.add_hotkey(htky, lambda x = len(macros) - 1: Run(macros[x]))
                 cr = []
-                view = "Nothing here yet"
                 window['-crn-'].update('')
                 window['-mac-'].update(values=UpdateList(macros, active))
                 window['-cdl-'].update(visible=False)
@@ -427,7 +460,7 @@ while True:
             ToggleInp(False)
             htky = ''
             htky = get_Hotkey()
-            window['-hts-'].update(htky)
+            window['-hts-'].update(value=htky)
             ToggleInp(True)
         case '-lod-':
             loading = askopenfilename(filetypes=[("Macro files", "*.macros")])
