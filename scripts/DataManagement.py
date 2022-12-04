@@ -3,7 +3,7 @@ import os
 import PySimpleGUI as sg
 from tkinter.filedialog import asksaveasfile
 
-def save(inp):
+def save(inp, act):
     f = asksaveasfile(mode='wb', defaultextension='.macros', filetypes=[("Macro Files", '*.macros')])
     if f == None:
         return
@@ -51,6 +51,12 @@ def save(inp):
                 for z in y[1]:
                     final.append(ord(z))
                 final.append(7)
+    final.append(11)
+    for x in act:
+        if x:
+            final.append(1)
+        else:
+            final.append(0)
     f.write(bytes(final))
     f.close()
 
@@ -104,6 +110,8 @@ def legacy(file, add, old):
     return cur
 
 def load(save, cur):
+    ret = []
+
     layout = [
         [sg.T('Do you want to merge your Macros with the savefile?')],
         [sg.Button('Yes', key='-yes-'), sg.Button('No', key='-noo-')]
@@ -123,57 +131,68 @@ def load(save, cur):
                     arr = 0
                     curr = ''
                     first = True
+                    active = True
+                    activated = []
                     for x in f.read():
-                        if x == 91 and first == True:
-                            window.close()
-                            return legacy(save, True, cur)
-                        if x == 6 and state == 2:
-                            state = 0
-                            arr = 0
-                            cur.append([])
-                            num = len(cur) - 1
-                        elif x == 6 and state == 1:
-                            state += 1
-                            cur[num].append([])
-                        elif x == 6:
-                            state += 1
-                        else:
-                            if state == 0:
-                                try:
-                                    cur[num][0] += chr(x)
-                                except:
-                                    cur[num].append(chr(x))
-                            elif state == 1:
-                                try:
-                                    cur[num][1] += chr(x)
-                                except:
-                                    cur[num].append(chr(x))
-                            elif state == 2:
-                                if x == 8:
-                                    cur[num][2].append([])
-                                    arr = len(cur[num][2]) - 1
-                                elif x == 7:
-                                    cur[num][2][arr].append(curr)
-                                    curr = ''
-                                else:
-                                    if x == 0 or x == 1 or x == 2 or x == 3 or x == 4 or x == 5:
-                                        if x == 0:
-                                            i = 0
-                                        elif x == 1:
-                                            i = 1
-                                        elif x == 2:
-                                            i = 2
-                                        elif x == 3:
-                                            i = 3
-                                        elif x == 4:
-                                            i = 4
-                                        elif x == 5:
-                                            i = 5
-                                        cur[num][2][arr].append(i)
+                        if active:
+                            if x == 91 and first == True:
+                                window.close()
+                                return legacy(save, True, cur)
+                            if x == 6 and state == 2:
+                                state = 0
+                                arr = 0
+                                cur.append([])
+                                num = len(cur) - 1
+                            elif x == 6 and state == 1:
+                                state += 1
+                                cur[num].append([])
+                            elif x == 6:
+                                state += 1
+                            elif x == 11:
+                                active = False
+                            else:
+                                if state == 0:
+                                    try:
+                                        cur[num][0] += chr(x)
+                                    except:
+                                        cur[num].append(chr(x))
+                                elif state == 1:
+                                    try:
+                                        cur[num][1] += chr(x)
+                                    except:
+                                        cur[num].append(chr(x))
+                                elif state == 2:
+                                    if x == 8:
+                                        cur[num][2].append([])
+                                        arr = len(cur[num][2]) - 1
+                                    elif x == 7:
+                                        cur[num][2][arr].append(curr)
+                                        curr = ''
                                     else:
-                                        curr += chr(x)
-                        first = False
-                    cur = convToInt(cur)
+                                        if x == 0 or x == 1 or x == 2 or x == 3 or x == 4 or x == 5:
+                                            if x == 0:
+                                                i = 0
+                                            elif x == 1:
+                                                i = 1
+                                            elif x == 2:
+                                                i = 2
+                                            elif x == 3:
+                                                i = 3
+                                            elif x == 4:
+                                                i = 4
+                                            elif x == 5:
+                                                i = 5
+                                            cur[num][2][arr].append(i)
+                                        else:
+                                            curr += chr(x)
+                            first = False
+                        else:
+                            if x == 0:
+                                activated.append(False)
+                            elif x == 1:
+                                activated.append(True)
+                    ret.append(convToInt(cur))
+                    ret.append(activated)
                 break
             case '-noo-':
                 cur = []
@@ -183,66 +202,77 @@ def load(save, cur):
                     arr = 0
                     curr = ''
                     first = True
+                    active = True
+                    activated = []
                     for x in f.read():
-                        if x == 91 and first == True:
-                            window.close()
-                            return legacy(save, False, cur)
-                        if x == 6 and state == 2:
-                            state = 0
-                            arr = 0
-                            cur.append([])
-                            num = len(cur) - 1
-                        elif x == 6 and state == 1:
-                            state += 1
-                            cur[num].append([])
-                        elif x == 6:
-                            state += 1
-                        else:
-                            if state == 0:
-                                try:
-                                    cur[num][0] += chr(x)
-                                except:
-                                    cur[num].append(chr(x))
-                            elif state == 1:
-                                try:
-                                    cur[num][1] += chr(x)
-                                except:
-                                    cur[num].append(chr(x))
-                            elif state == 2:
-                                if x == 8:
-                                    cur[num][2].append([])
-                                    arr = len(cur[num][2]) - 1
-                                elif x == 7:
-                                    cur[num][2][arr].append(curr)
-                                    curr = ''
-                                else:
-                                    if x == 0 or x == 1 or x == 2 or x == 3 or x == 4 or x == 5:
-                                        if x == 0:
-                                            i = 0
-                                        elif x == 1:
-                                            i = 1
-                                        elif x == 2:
-                                            i = 2
-                                        elif x == 3:
-                                            i = 3
-                                        elif x == 4:
-                                            i = 4
-                                        elif x == 5:
-                                            i = 5
-                                        cur[num][2][arr].append(i)
+                        if active:
+                            if x == 91 and first == True:
+                                window.close()
+                                return legacy(save, False, cur)
+                            if x == 6 and state == 2:
+                                state = 0
+                                arr = 0
+                                cur.append([])
+                                num = len(cur) - 1
+                            elif x == 6 and state == 1:
+                                state += 1
+                                cur[num].append([])
+                            elif x == 6:
+                                state += 1
+                            elif x == 11:
+                                active = False
+                            else:
+                                if state == 0:
+                                    try:
+                                        cur[num][0] += chr(x)
+                                    except:
+                                        cur[num].append(chr(x))
+                                elif state == 1:
+                                    try:
+                                        cur[num][1] += chr(x)
+                                    except:
+                                        cur[num].append(chr(x))
+                                elif state == 2:
+                                    if x == 8:
+                                        cur[num][2].append([])
+                                        arr = len(cur[num][2]) - 1
+                                    elif x == 7:
+                                        cur[num][2][arr].append(curr)
+                                        curr = ''
                                     else:
-                                        curr += chr(x)
-                        first = False
-                    cur = convToInt(cur)
+                                        if x == 0 or x == 1 or x == 2 or x == 3 or x == 4 or x == 5:
+                                            if x == 0:
+                                                i = 0
+                                            elif x == 1:
+                                                i = 1
+                                            elif x == 2:
+                                                i = 2
+                                            elif x == 3:
+                                                i = 3
+                                            elif x == 4:
+                                                i = 4
+                                            elif x == 5:
+                                                i = 5
+                                            cur[num][2][arr].append(i)
+                                        else:
+                                            curr += chr(x)
+                            first = False
+                        else:
+                            if x == 0:
+                                activated.append(False)
+                            elif x == 1:
+                                activated.append(True)
+                    ret.append(convToInt(cur))
+                    ret.append(activated)
                 break
 
     # ------ After Eventloop ------
     #   Window will be closed, value will be returned and script ends
 
     window.close()
-    return cur
+    return ret
 
-def saveStart(inp):
+def saveStart(inp, act):
     path = os.path.expanduser('~\AppData\Roaming\SimpleMacro')
     if os.path.isdir(path) != True:
         os.mkdir(path)
@@ -292,6 +322,12 @@ def saveStart(inp):
                     for z in y[1]:
                         final.append(ord(z))
                     final.append(7)
+        final.append(11)
+        for x in act:
+            if x:
+                final.append(1)
+            else:
+                final.append(0)
         f.write(bytes(final))
 
 
@@ -309,57 +345,68 @@ def loadStart():
             num = 0
             arr = 0
             curr = ''
+            active = True
+            activated = []
             for x in f.read():
-                if x == 6 and state == 2:
-                    state = 0
-                    arr = 0
-                    cur.append([])
-                    num = len(cur) - 1
-                elif x == 6 and state == 1:
-                    state += 1
-                    cur[num].append([])
-                elif x == 6:
-                    state += 1
-                elif x == 10:
-                    final.append(False)
-                elif x == 9:
-                    final.append(True)
-                else:
-                    if state == 0:
-                        try:
-                            cur[num][0] += chr(x)
-                        except:
-                            cur[num].append(chr(x))
-                    elif state == 1:
-                        try:
-                            cur[num][1] += chr(x)
-                        except:
-                            cur[num].append(chr(x))
-                    elif state == 2:
-                        if x == 8:
-                            cur[num][2].append([])
-                            arr = len(cur[num][2]) - 1
-                        elif x == 7:
-                            cur[num][2][arr].append(curr)
-                            curr = ''
-                        else:
-                            if x == 0 or x == 1 or x == 2 or x == 3 or x == 4 or x == 5:
-                                if x == 0:
-                                    i = 0
-                                elif x == 1:
-                                    i = 1
-                                elif x == 2:
-                                    i = 2
-                                elif x == 3:
-                                    i = 3
-                                elif x == 4:
-                                    i = 4
-                                elif x == 5:
-                                    i = 5
-                                cur[num][2][arr].append(i)
+                if active:
+                    if x == 6 and state == 2:
+                        state = 0
+                        arr = 0
+                        cur.append([])
+                        num = len(cur) - 1
+                    elif x == 6 and state == 1:
+                        state += 1
+                        cur[num].append([])
+                    elif x == 6:
+                        state += 1
+                    elif x == 10:
+                        final.append(False)
+                    elif x == 9:
+                        final.append(True)
+                    elif x == 11:
+                        active = False
+                    else:
+                        if state == 0:
+                            try:
+                                cur[num][0] += chr(x)
+                            except:
+                                cur[num].append(chr(x))
+                        elif state == 1:
+                            try:
+                                cur[num][1] += chr(x)
+                            except:
+                                cur[num].append(chr(x))
+                        elif state == 2:
+                            if x == 8:
+                                cur[num][2].append([])
+                                arr = len(cur[num][2]) - 1
+                            elif x == 7:
+                                cur[num][2][arr].append(curr)
+                                curr = ''
                             else:
-                                curr += chr(x)
-        final = convToInt(cur)
+                                if x == 0 or x == 1 or x == 2 or x == 3 or x == 4 or x == 5:
+                                    if x == 0:
+                                        i = 0
+                                    elif x == 1:
+                                        i = 1
+                                    elif x == 2:
+                                        i = 2
+                                    elif x == 3:
+                                        i = 3
+                                    elif x == 4:
+                                        i = 4
+                                    elif x == 5:
+                                        i = 5
+                                    cur[num][2][arr].append(i)
+                                else:
+                                    curr += chr(x)
+                else:
+                    if x == 0:
+                        activated.append(False)
+                    elif x == 1:
+                        activated.append(True)
+        final.append(convToInt(cur))
+        final.append(activated)
     except:
         return []
     return final

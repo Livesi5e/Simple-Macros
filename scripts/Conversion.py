@@ -46,3 +46,9 @@ def UpdateMid(x):
                 text[len(text)-1].append('')
 
     return text
+
+def UpdateList(macros, active):
+    data = []
+    for x, y in zip(macros, active):
+        data.append([x[0], x[1], y])
+    return data

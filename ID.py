@@ -14,6 +14,10 @@
 # 6 - Seperator of degree 1
 # 7 - Seperator of degree 2
 # 8 - Seperator of degree 3
+# 11 - Seperator of degree 4
 # 
 # 9 - No Autostart
 # 10 - Autostart
+#
+# 0 - Macro off
+# 1 - Macro on

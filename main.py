@@ -3,17 +3,16 @@
 # Does not support macro recording
 
 import PySimpleGUI as sg
-import tkinter
 from tkinter.filedialog import askopenfilename
 import keyboard
 from scripts.charSelect import charSelector
 from scripts.DataManagement import load, save, saveStart, loadStart, loadOptions
-from scripts.Conversion import convert, UpdateMid
+from scripts.Conversion import convert, UpdateMid, UpdateList
 from scripts.macros import Run, load_hotkeys
 from scripts.OptionMenu import Options
 from scripts.warning import warn
 
-# --- Inital variables ---
+# ---- Inital variables ----
 
 list = ("Mouse Movement", "Mouse Click", "Keyboard Input")
 mb = ("Left", "Middle", "Right")
@@ -23,6 +22,7 @@ menu_list = ['File', ['Save', 'Load', 'New', '---', 'Options', '---', 'Exit']],[
 cr = []
 hotkeys = [] 
 macros = []
+active = []
 htky = ''
 sel=''
 sel_mac = ''
@@ -37,8 +37,8 @@ single = True
 prefs = loadOptions()
 if prefs[1]:
     loaded = loadStart()
-    macros = loaded
-    load_hotkeys(macros, True)
+    macros, active = loaded[0], loaded[1]
+    load_hotkeys(macros, True, active)
 
 # - All window components -
 
@@ -159,8 +159,8 @@ current_macro = [
 your_macros = [
     [
         sg.Table(
-            values=macros,
-            headings=['Macros', 'Hotkey'],
+            values=UpdateList(macros, active),
+            headings=['Macros', 'Hotkey', 'Active'],
             num_rows=10,
             alternating_row_color='green',
             key='-mac-',
@@ -168,7 +168,7 @@ your_macros = [
             justification='center',
         )
     ],
-    [sg.Button(button_text='New', key='-new-'), sg.Button(button_text='Delete', key='-del-'), sg.Submit(button_text='Run', key='-run-'), sg.Button(button_text='Load', key='-lod-'), sg.Button(button_text='Save', key='-sve-')]
+    [sg.Button(button_text='New', key='-new-'), sg.Button(button_text='Delete', key='-del-'), sg.Button(button_text='Load', key='-lod-'), sg.Button(button_text='Save', key='-sve-'), sg.Button(button_text='Active', key='-off-')]
 ]
 
 # ------ Full layout ------
@@ -253,7 +253,7 @@ def New():
     macros = []
 
 def saveNew():
-    save(macros)
+    save(macros, active)
     New()
 
 # ------ Event Loop ------
@@ -271,7 +271,7 @@ while True:
     match event:
         case sg.WIN_CLOSED:
             if prefs[1]:
-                saveStart(macros)
+                saveStart(macros, active)
             break
         case "-new-":
             window['-left-'].update(visible=True)
@@ -382,13 +382,14 @@ while True:
                 else:
                     warn('Warning', 'Please enter a text and try again', Okay=lambda : None)
         case "-cre-":
-            if values['-crn-'] != '':
+            if values['-crn-'] != '' and htky != '':
                 macros.append([values['-crn-'], htky, cr])
+                active.append(True)
                 keyboard.add_hotkey(htky, lambda x = len(macros) - 1: Run(macros[x]))
                 cr = []
                 view = "Nothing here yet"
                 window['-crn-'].update('')
-                window['-mac-'].update(values=macros)
+                window['-mac-'].update(values=UpdateList(macros, active))
                 window['-cdl-'].update(visible=False)
                 window['-cre-'].update(visible=False)
                 window['-crn-'].update(visible=False)
@@ -399,8 +400,10 @@ while True:
                 window['-left-'].update(visible=False)
                 window['-mid-'].update(visible=False)
                 window['-can-'].update(visible=False)
-            else:
+            elif htky != '':
                 warn('Provide a name', 'Please provide a name to the Macro', Okay=lambda : None)
+            else:
+                warn('Provide a Hotkey', 'Please provide a hotkey to the Macro', Okay=lambda : None)
         case '-cho-':
             sel = charSelector()
             window['-cho-'].update(sel)
@@ -408,10 +411,10 @@ while True:
             sel_mac = [macros[row] for row in values['-mac-']]
             try:
                 macros.remove(sel_mac[0])
-                load_hotkeys(macros, False)
+                load_hotkeys(macros, False, active)
             except:
                 warn('Attention!','Select an entry to delete', Okay=lambda : None)
-            window['-mac-'].update(values=macros)
+            window['-mac-'].update(values=UpdateList(macros, active))
         case '-run-':
             sel_mac = [macros[row] for row in values['-mac-']]
             try:
@@ -427,11 +430,16 @@ while True:
         case '-lod-':
             loading = askopenfilename(filetypes=[("Macro files", "*.macros")])
             if loading != '':
-                macros = load(loading, macros)
-                load_hotkeys(macros, False)
-            window['-mac-'].update(values=macros)
+                temp = load(loading, macros)
+                if macros != []:
+                    tempmac = False
+                else:
+                    tempmac = True
+                macros, active = temp[0], temp[1]
+                load_hotkeys(macros, tempmac, active)
+            window['-mac-'].update(values=UpdateList(macros, active))
         case '-sve-':
-            save(macros)
+            save(macros, active)
         case '-cdl-':
             cr.remove(cr[values['-cur-'][0]])
             window['-cur-'].update(values=UpdateMid(cr))
@@ -440,7 +448,7 @@ while True:
             Reset()
             ResetAdv()
             window['-crn-'].update('')
-            window['-mac-'].update(values=macros)
+            window['-mac-'].update(values=UpdateList(macros, active))
             window['-cdl-'].update(visible=False)
             window['-cre-'].update(visible=False)
             window['-crn-'].update(visible=False)
@@ -451,19 +459,37 @@ while True:
             window['-left-'].update(visible=False)
             window['-mid-'].update(visible=False)
             window['-can-'].update(visible=False)
+        case '-off-':
+            sel_mac = [active[row] for row in values['-mac-']]
+            # try:
+            sel_mac[0] = toggle(sel_mac[0])
+            for x in active:
+                if x:
+                    tempmac = False
+            active[values['-mac-'][0]] = sel_mac[0]
+            tempmac = True
+            load_hotkeys(macros, tempmac, active)
+            window['-mac-'].update(values=UpdateList(macros, active))
+            # except:
+            #     warn('Warning!', 'Select an entry to toggle on or off!', Okay=lambda : None)
         case 'Save':
-            save(macros)
+            save(macros, active)
         case 'Load':
             loading = askopenfilename(filetypes=[("Macro files", "*.macros")])
             if loading != '':
-                macros = load(loading, macros)
-                load_hotkeys(macros, False)
-            window['-mac-'].update(values=macros)
+                temp = load(loading, macros)
+                if macros != []:
+                    tempmac = False
+                else:
+                    tempmac = True
+                macros, active = temp[0], temp[1]
+                load_hotkeys(macros, tempmac, active)
+            window['-mac-'].update(values=UpdateList(macros, active))
         case 'Options':
             Options(loadOptions())
         case 'New':
             warn('Warning!','Attention! This will delete all your current macros.\nDo you want to save them before proceeding?', Yes=saveNew, No=New)
-            window['-mac-'].update(values=macros)
+            window['-mac-'].update(values=UpdateList(macros, active))
         case 'Run':
             sel_mac = [macros[row] for row in values['-mac-']]
             try:
@@ -474,13 +500,13 @@ while True:
             sel_mac = [macros[row] for row in values['-mac-']]
             try:
                 macros.remove(sel_mac[0])
-                load_hotkeys(macros, False)
+                load_hotkeys(macros, False, active)
             except:
                 warn('Attention!','Select an entry to delete', Okay=lambda : None)
-            window['-mac-'].update(values=macros)
+            window['-mac-'].update(values=UpdateList(macros, active))
         case 'Exit':
             if prefs[1]:
-                saveStart(macros)
+                saveStart(macros, active)
             break
 
 window.close()
