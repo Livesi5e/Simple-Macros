@@ -5,10 +5,10 @@ import PySimpleGUI as sg
 #   Syntax:
 #   warn(title, message, button1_name=function, button2_name=function, ...)
 #
-#   You can use anonymous functions with lambda
+#   You can use anonymous functions with lambda.
+#   Note that you can't have two buttons with the same name
 
 def warn(title, message, **param):
-    sg.theme('LightBlue2')
     buttons = [[]]
 
     for name, func in param.items():

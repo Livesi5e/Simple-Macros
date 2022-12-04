@@ -408,7 +408,7 @@ def loadStart():
         final.append(convToInt(cur))
         final.append(activated)
     except:
-        return []
+        return [[],[]]
     return final
 
 def loadOptions():

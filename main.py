@@ -411,6 +411,8 @@ while True:
             sel_mac = [macros[row] for row in values['-mac-']]
             try:
                 macros.remove(sel_mac[0])
+                del active[values['-mac-'][0]]
+                print(active)
                 load_hotkeys(macros, False, active)
             except:
                 warn('Attention!','Select an entry to delete', Okay=lambda : None)
@@ -432,9 +434,9 @@ while True:
             if loading != '':
                 temp = load(loading, macros)
                 if macros != []:
-                    tempmac = False
-                else:
                     tempmac = True
+                else:
+                    tempmac = False
                 macros, active = temp[0], temp[1]
                 load_hotkeys(macros, tempmac, active)
             window['-mac-'].update(values=UpdateList(macros, active))
@@ -463,11 +465,11 @@ while True:
             sel_mac = [active[row] for row in values['-mac-']]
             # try:
             sel_mac[0] = toggle(sel_mac[0])
+            tempmac = True
             for x in active:
                 if x:
                     tempmac = False
             active[values['-mac-'][0]] = sel_mac[0]
-            tempmac = True
             load_hotkeys(macros, tempmac, active)
             window['-mac-'].update(values=UpdateList(macros, active))
             # except:
@@ -479,9 +481,9 @@ while True:
             if loading != '':
                 temp = load(loading, macros)
                 if macros != []:
-                    tempmac = False
-                else:
                     tempmac = True
+                else:
+                    tempmac = False
                 macros, active = temp[0], temp[1]
                 load_hotkeys(macros, tempmac, active)
             window['-mac-'].update(values=UpdateList(macros, active))
